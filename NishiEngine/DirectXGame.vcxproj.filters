@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{94ad959f-0df5-49bf-b6ca-f7c1bf6172c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem">
+      <UniqueIdentifier>{cd14f847-30f1-40f7-9951-8b7802994b05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem">
+      <UniqueIdentifier>{c730ecda-0f9f-4159-a3d9-55348f5f8d5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\obj">
+      <UniqueIdentifier>{04d62c9f-a819-4882-8837-24aca126f993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\particle">
+      <UniqueIdentifier>{9b91ae30-f793-456e-8595-bcb9e407c00d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\sprite">
+      <UniqueIdentifier>{3cc41849-fc1b-4ffe-b873-5a683ec68e30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shader\water">
+      <UniqueIdentifier>{9be6bc67-9dd9-4a37-934c-06995001b971}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Audio">
+      <UniqueIdentifier>{7924416c-50bb-4f97-9da7-18b533203b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Camera">
+      <UniqueIdentifier>{64ba4bb4-45d5-44ce-9754-d9337fdcd731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Camera\Camera">
+      <UniqueIdentifier>{addb1890-9e33-47ab-b7d8-c6febcf36b11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Camera\DebugCamera">
+      <UniqueIdentifier>{616c449f-bd2e-42ac-b391-09a111a906cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Light">
+      <UniqueIdentifier>{612d7b73-27a1-4048-82ae-99ac87e6587b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Light\LightGroup">
+      <UniqueIdentifier>{010e782a-ddf6-4e2a-9c18-2a676d3a1bb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\3D">
+      <UniqueIdentifier>{749fdab4-9ccc-44da-a49d-1b070baf39f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\3D\Model">
+      <UniqueIdentifier>{44e45dc0-5b73-4d77-a616-662eb383862b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\3D\Material">
+      <UniqueIdentifier>{1d7b1499-351c-43ce-98f8-3f5069b81dce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\3D\Mesh">
+      <UniqueIdentifier>{cf05cd47-e340-4196-b94a-b1c3048d8c9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\3D\Object3d">
+      <UniqueIdentifier>{d8e53916-3b42-4447-89ea-637290c25040}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\2D">
+      <UniqueIdentifier>{09abb7bb-3c47-4491-8dbb-6ce279b0cf50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\2D\DebugText">
+      <UniqueIdentifier>{ee34cb56-517a-4ee4-8704-aa46b779aa8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\2D\Sprite">
+      <UniqueIdentifier>{fe803281-3054-46e5-bec3-41f8dd715f23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Particle">
+      <UniqueIdentifier>{d17a3a44-93a0-4fd2-9c35-dbd8aad90975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Particle\ParticleManager">
+      <UniqueIdentifier>{9f7e5b72-58e3-40d2-9a0d-a86c643cf0aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\3D\WaterObject">
+      <UniqueIdentifier>{e47e976f-47f6-4b19-9c88-6b4a5350499f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Base">
+      <UniqueIdentifier>{7793a5c5-fdce-46a4-a023-19f78c8a61fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Base\WinApp">
+      <UniqueIdentifier>{5e07a580-5e03-4859-9dab-4800e44b43fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BaseSystem\Base\DirectXCommon">
+      <UniqueIdentifier>{8a011eaa-18f8-4a54-bffe-73e6cf64386e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\GameScene">
+      <UniqueIdentifier>{257e981d-e3c8-4456-ae9d-d0d1a53f9329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\Input">
+      <UniqueIdentifier>{7502cd62-f975-4ebc-8792-6a635632b4cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\Collision">
+      <UniqueIdentifier>{c93e32b2-76dc-4f55-9ac7-a1d3e7576eb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\Collision\Collision">
+      <UniqueIdentifier>{e3577127-4bb5-428d-b715-7bd6c44df519}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameSystem\Collision\CollisionPrimitive">
+      <UniqueIdentifier>{e3ba6648-83af-4305-8479-5d5f9d209f3f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Resources\shader\OBJPixelShader.hlsl">
+      <Filter>Shader\obj</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\OBJVertexShader.hlsl">
+      <Filter>Shader\obj</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\ParticleVS.hlsl">
+      <Filter>Shader\particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\ParticlePS.hlsl">
+      <Filter>Shader\particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\ParticleGS.hlsl">
+      <Filter>Shader\particle</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\SpriteVertexShader.hlsl">
+      <Filter>Shader\sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\SpritePixelShader.hlsl">
+      <Filter>Shader\sprite</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\WaterVertexShader.hlsl">
+      <Filter>Shader\water</Filter>
+    </FxCompile>
+    <FxCompile Include="Resources\shader\WaterPixelShader.hlsl">
+      <Filter>Shader\water</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shader\OBJShaderHeader.hlsli">
+      <Filter>Shader\obj</Filter>
+    </None>
+    <None Include="Resources\shader\Particle.hlsli">
+      <Filter>Shader\particle</Filter>
+    </None>
+    <None Include="Resources\shader\SpriteShaderHeader.hlsli">
+      <Filter>Shader\sprite</Filter>
+    </None>
+    <None Include="Resources\shader\WaterShaderHeader.hlsli">
+      <Filter>Shader\water</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Sources\Audio.cpp">
+      <Filter>BaseSystem\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Camera.cpp">
+      <Filter>BaseSystem\Camera\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\DebugCamera.cpp">
+      <Filter>BaseSystem\Camera\DebugCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\LightGroup.cpp">
+      <Filter>BaseSystem\Light\LightGroup</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Model.cpp">
+      <Filter>BaseSystem\3D\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Mesh.cpp">
+      <Filter>BaseSystem\3D\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Material.cpp">
+      <Filter>BaseSystem\3D\Material</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Object3d.cpp">
+      <Filter>BaseSystem\3D\Object3d</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\DebugText.cpp">
+      <Filter>BaseSystem\2D\DebugText</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Sprite.cpp">
+      <Filter>BaseSystem\2D\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\ParticleManager.cpp">
+      <Filter>BaseSystem\Particle\ParticleManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\WaterObject.cpp">
+      <Filter>BaseSystem\3D\WaterObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\DirectXCommon.cpp">
+      <Filter>BaseSystem\Base\DirectXCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\WinApp.cpp">
+      <Filter>BaseSystem\Base\WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\main.cpp">
+      <Filter>BaseSystem\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\GameScene.cpp">
+      <Filter>GameSystem\GameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Input.cpp">
+      <Filter>GameSystem\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\Collision.cpp">
+      <Filter>GameSystem\Collision\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Sources\CollisionPrimitive.cpp">
+      <Filter>GameSystem\Collision\CollisionPrimitive</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Sources\Audio.h">
+      <Filter>BaseSystem\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Camera.h">
+      <Filter>BaseSystem\Camera\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\DebugCamera.h">
+      <Filter>BaseSystem\Camera\DebugCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CircleShadow.h">
+      <Filter>BaseSystem\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\DirectionalLight.h">
+      <Filter>BaseSystem\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\LightGroup.h">
+      <Filter>BaseSystem\Light\LightGroup</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Model.h">
+      <Filter>BaseSystem\3D\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Mesh.h">
+      <Filter>BaseSystem\3D\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Material.h">
+      <Filter>BaseSystem\3D\Material</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Object3d.h">
+      <Filter>BaseSystem\3D\Object3d</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\DebugText.h">
+      <Filter>BaseSystem\2D\DebugText</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Sprite.h">
+      <Filter>BaseSystem\2D\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\ParticleManager.h">
+      <Filter>BaseSystem\Particle\ParticleManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WaterObject.h">
+      <Filter>BaseSystem\3D\WaterObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\DirectXCommon.h">
+      <Filter>BaseSystem\Base\DirectXCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\WinApp.h">
+      <Filter>BaseSystem\Base\WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SafeDelete.h">
+      <Filter>BaseSystem\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\GameScene.h">
+      <Filter>GameSystem\GameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Input.h">
+      <Filter>GameSystem\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Collision.h">
+      <Filter>GameSystem\Collision\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\CollisionPrimitive.h">
+      <Filter>GameSystem\Collision\CollisionPrimitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\PointLight.h">
+      <Filter>BaseSystem\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\SpotLight.h">
+      <Filter>BaseSystem\Light</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
