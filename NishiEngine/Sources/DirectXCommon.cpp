@@ -1,8 +1,8 @@
 ﻿#include "DirectXCommon.h"
 #include <vector>
 #include <cassert>
-#include <imgui_impl_win32.h>
-#include <imgui_impl_dx12.h>
+//#include <imgui_impl_win32.h>
+//#include <imgui_impl_dx12.h>
 #include "SafeDelete.h"
 
 #pragma comment(lib, "d3d12.lib")
@@ -37,7 +37,7 @@ void DirectXCommon::Initialize(WinApp* winApp)
 	if (!CreateFence()) { assert(0); }
 
 	//imgui初期化
-	if (!InitImgui()) { assert(0); }
+	//if (!InitImgui()) { assert(0); }
 }
 
 void DirectXCommon::PreDraw()
@@ -66,9 +66,9 @@ void DirectXCommon::PreDraw()
 	commandList->RSSetScissorRects(1, &CD3DX12_RECT(0, 0, WinApp::winWidth, WinApp::winHeight));
 
 	//imgui開始
-	ImGui_ImplDX12_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+	//ImGui_ImplDX12_NewFrame();
+	//ImGui_ImplWin32_NewFrame();
+	//ImGui::NewFrame();
 
 	//経過時間計測
 	auto now = std::chrono::steady_clock::now();
@@ -95,10 +95,10 @@ void DirectXCommon::PreDraw()
 void DirectXCommon::PostDraw()
 {
 	//imgui描画
-	ImGui::Render();
-	ID3D12DescriptorHeap* ppHeaps[] = { imguiHeap.Get() };
-	commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
+	//ImGui::Render();
+	//ID3D12DescriptorHeap* ppHeaps[] = { imguiHeap.Get() };
+	//commandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+	//ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList.Get());
 
 	//リソースバリアを変更（描画対象→表示状態）
 	UINT bbIndex = swapchain->GetCurrentBackBufferIndex();
@@ -407,6 +407,7 @@ bool DirectXCommon::CreateFence()
 	return true;
 }
 
+/*
 bool DirectXCommon::InitImgui()
 {
 	HRESULT result = S_FALSE;
@@ -457,3 +458,4 @@ bool DirectXCommon::InitImgui()
 
 	return true;
 }
+*/

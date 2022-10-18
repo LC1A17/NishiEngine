@@ -22,6 +22,7 @@ void DebugCamera::Update()
 	//マウスの入力を取得
 	Input::MouseMove mouseMove = input->GetMouseMove();
 
+	/*
 	//マウスの左ボタンが押されていたらカメラを回転させる
 	if (input->PushMouseLeft())
 	{
@@ -53,6 +54,7 @@ void DebugCamera::Update()
 		distance = max(distance, 1.0f);
 		dirty = true;
 	}
+	*/
 
 	if (dirty || viewDirty)
 	{

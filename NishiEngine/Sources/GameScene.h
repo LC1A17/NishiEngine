@@ -74,7 +74,7 @@ private://メンバ変数
 	Model* playerModel = nullptr;//プレイヤーのモデル
 	Model* pBulletModel = nullptr;//プレイヤーの弾のモデル
 	Model* enemyModel = nullptr;//敵のモデル
-	Model* partsModel = nullptr;//パーツのモデル
+	Model* partsModel = nullptr;//落ちているパーツのモデル
 	Model* playerPartsModel = nullptr;//プレイヤーのパーツのモデル
 
 	//オブジェクト関連
@@ -82,37 +82,43 @@ private://メンバ変数
 	WaterObject* groundWater = nullptr;//地面のオブジェクト
 	Object3d* ground = nullptr;//地面のオブジェクト
 	Object3d* player = nullptr;//プレイヤーのオブジェクト
-	Object3d* pBullet[10];//プレイヤーの弾のオブジェクト
-	Object3d* enemy[10];//敵のオブジェクト
-	Object3d* parts[10];//パーツのオブジェクト
-	Object3d* playerParts[10];//プレイヤーのパーツのオブジェクト
+	Object3d* pBullet[100];//プレイヤーの弾のオブジェクト
+	Object3d* enemy[100];//敵のオブジェクト
+	Object3d* parts[100];//落ちているパーツのオブジェクト
+	Object3d* playerParts[100];//プレイヤーのパーツのオブジェクト
 
 	//スプライト関連
+	Sprite* titleBack = nullptr;//タイトル背景のスプライト
 	Sprite* gameBack = nullptr;//ゲーム背景のスプライト
 	Sprite* resultBack = nullptr;//リザルト背景のスプライト
 
 	//オブジェクト座標関連
+	XMFLOAT3 skydomePos = { 0, 0, 0 };//天球の座標
 	XMFLOAT3 cameraPos = { 0, 4.5, 0 };//カメラの座標
-	XMFLOAT3 pPos = { 0, 1, 0 };//プレイヤーの座標
-	XMFLOAT3 pBulletPos[10];//プレイヤーの弾の座標
+	XMFLOAT3 pPos = { 0, 2, 3 };//プレイヤーの座標
+	XMFLOAT3 pBulletPos[100];//プレイヤーの弾の座標
 	XMFLOAT3 pBulletSpeed = { 0, 0, 1 };//プレイヤーの弾のスピード
-	XMFLOAT3 ePos[10];//敵の座標
-	XMFLOAT3 partsPos[10];//パーツの座標
-	XMFLOAT3 pPartsPos[10];//プレイヤーのパーツの座標
+	XMFLOAT3 ePos[100];//敵の座標
+	XMFLOAT3 partsPos[100];//パーツの座標
+	XMFLOAT3 pPartsPos[100];//プレイヤーのパーツの座標
 	XMFLOAT3 domeRot = { 0, 0, 0 };//天球の回転
 
 	//処理関連
 	int scene = Title;//ゲームシーン
-	int enemyCount = 10;//配置された敵の数
+	int enemyCount = 100;//配置された敵の数
 	int deadEnemyCount = 0;//撃破した敵の数
 	int partsCount = 0;//パーツの取得数
 
-	bool pBulletArive[10];//弾が生きているかの判定
-	int pBulletAriveTime[10];//弾が生きている時間
+	bool pBulletArive[100];//弾が生きているかの判定
+	int pBulletAriveTime[100];//弾が生きている時間
 	int pBulletCount = 0;//弾発射までのカウント
 	int pBulletInterval = 20;//弾発射までの時間
 
-	bool enemyArive[10];//敵が生きているかの判定
-	bool partsArive[10];//パーツが生きているかの判定
-	bool pPartsArive[10];//プレイヤーのパーツが生きているかの判定
+	bool enemyArive[100];//敵が生きているかの判定
+	bool partsArive[100];//パーツが生きているかの判定
+	bool pPartsArive[100];//プレイヤーのパーツが生きているかの判定
+
+	int enemySpawnTimer = 0;//敵の出現までのカウント
+	int enemySpawnInterval = 60;//敵出現までの間隔
+	int enemySpawnRate = 1;//一度に出る敵の出現数
 };

@@ -1,7 +1,7 @@
 ﻿#include "WinApp.h"
-#include <imgui_impl_win32.h>
+//#include <imgui_impl_win32.h>
 
-extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+//extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 const wchar_t WinApp::winName[] = L"LE3B_20_ニシハタ_コウキ";//名前
 const int WinApp::winWidth = 1280;//横幅
@@ -10,10 +10,10 @@ const int WinApp::winHeight = 720;//縦幅
 //ウィンドウプロシージャ
 LRESULT WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
-	{
-		return 1;
-	}
+	//if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+	//{
+	//	return 1;
+	//}
 
 	//メッセージで分岐
 	switch (msg)
