@@ -97,6 +97,9 @@
     <Filter Include="GameSystem\Collision\CollisionPrimitive">
       <UniqueIdentifier>{e3ba6648-83af-4305-8479-5d5f9d209f3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameSystem\Easing">
+      <UniqueIdentifier>{37a6490b-721f-41cc-84f5-a4dbab7a224e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Resources\shader\OBJPixelShader.hlsl">
@@ -199,6 +202,9 @@
     <ClCompile Include="Sources\CollisionPrimitive.cpp">
       <Filter>GameSystem\Collision\CollisionPrimitive</Filter>
     </ClCompile>
+    <ClCompile Include="Sources\Easing.cpp">
+      <Filter>GameSystem\Easing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Sources\Audio.h">
@@ -269,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="Sources\SpotLight.h">
       <Filter>BaseSystem\Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Sources\Easing.h">
+      <Filter>GameSystem\Easing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
