@@ -72,7 +72,15 @@ private://メンバ変数
 	Sprite* titleSprite = nullptr;//タイトル背景のスプライト
 	Sprite* gameSprite = nullptr;//ゲーム背景のスプライト
 	Sprite* resultSprite = nullptr;//リザルト背景のスプライト
-
+	Sprite* upArrowSprite = nullptr;//矢印上のスプライト
+	Sprite* upArrowSelectSprite = nullptr;//矢印上(選択中)のスプライト
+	Sprite* downArrowSprite = nullptr;//矢印下のスプライト
+	Sprite* downArrowSelectSprite = nullptr;//矢印下(選択中)のスプライト
+	Sprite* leftArrowSprite = nullptr;//矢印左のスプライト
+	Sprite* leftArrowSelectSprite = nullptr;//矢印左(選択中)のスプライト
+	Sprite* rightArrowSprite = nullptr;//矢印右のスプライト
+	Sprite* rightArrowSelectSprite = nullptr;//矢印右(選択中)のスプライト
+	
 	//モデル関連
 	Model* domeModel = nullptr;//天球のモデル
 	Model* railModel = nullptr;//レールのモデル
@@ -113,8 +121,7 @@ private://メンバ変数
 	XMFLOAT3 railSca[5];//レールのサイズ
 	XMFLOAT3 pSca = { 1.0f, 1.0f, 1.0f };//プレイヤーのサイズ
 	XMFLOAT3 pOldPos = { 0.0f, 0.0f, 0.0f };//プレイヤーの移動前の座標
-	XMFLOAT3 e01Sca[100];//敵1のサイズ
-	XMFLOAT3 e02Sca[100];//敵2のサイズ
+	XMFLOAT3 eSca[100];//敵のサイズ
 	XMFLOAT3 partsSca[100];//パーツのサイズ
 	XMFLOAT3 pPartsOldPos[100];//プレイヤーのパーツの移動前の座標
 	XMFLOAT3 deadPos = { 1000.0f, 1000.0f, 1000.0f };//画面外の座標
@@ -166,14 +173,14 @@ private://メンバ変数
 
 	//プレイヤー射撃関連
 	//初期化不要
-	float pBullSpead[3];//弾の速度
-	float partsInitCD[3];//パーツのCDの最大値
-	float partsInitHP[3];//パーツの耐久値の最大値
-	float partsInitTime[3];//弾の生存時間の最大値
-	float partsRecovery[3];//パーツの耐久値回復量
+	float pBullSpead[5];//弾の速度
+	float partsInitCD[5];//パーツのCDの最大値
+	float partsInitHP[5];//パーツの耐久値の最大値
+	float partsInitTime[5];//弾の生存時間の最大値
+	float partsRecovery[5];//パーツの耐久値回復量
 
 	//初期化必要
-	float shotNum = 0;//攻撃パターン
+	float shotNum = 0.0f;//攻撃パターン
 	float partsNum[4];//装着中のパーツの種類
 	float partsCD[4];//パーツのCD
 	float partsHP[4];//パーツの耐久値
@@ -186,24 +193,30 @@ private://メンバ変数
 	bool pPartsArive[100];//プレイヤーのパーツが生きているかの判定
 	bool parts01Arive[100];//パーツ1が生きているかの判定
 	bool parts02Arive[100];//パーツ2が生きているかの判定
+	bool parts03Arive[100];//パーツ3が生きているかの判定
+	bool parts04Arive[100];//パーツ4が生きているかの判定
 
 	//敵関連
 	//初期化不要
 	float enemyPosY = 2.0f;//基本となるY座標
 	float enemyPosZ = 50.0f;//基本となるZ座標
+	float moveEPosZ = -0.3f;//自動で前に進む速度
+	float deadLinePos = -10.0f;//画面買いに消えるタイミング
 
 	//初期化必要
 	float enemySpawnTimer = 0.0f;//敵の出現までのカウント
-	float enemySpawnInterval = 60.0f;//敵出現までの間隔
+	float enemySpawnInterval = 10.0f;//敵出現までの間隔
 	bool enemy01Arive[100];//敵1が生きているかの判定
 	bool enemy02Arive[100];//敵2が生きているかの判定
+	bool enemy03Arive[100];//敵3が生きているかの判定
+	bool enemy04Arive[100];//敵4が生きているかの判定
 
 	//システム関連
 	//初期化不要
 	float domeRotSpead = 0.05f;//天球の回転速度
 	float waterPosSpead = 0.1f;//水の流れる速度
 	float partsRotSpead = 15.0f;//パーツの回転速度
-	float gameTimeLimit = 3600.0;//ゲーム終了時間
+	float gameTimeLimit = 3600.0f;//ゲーム終了時間
 
 	//初期化必要
 	float gameTime = 0.0f;//ゲーム経過時間
@@ -212,6 +225,8 @@ private://メンバ変数
 	//敵射撃関連
 	//初期化不要
 	float eBullSpead[1];//弾の速度
+
+	//初期化必要
 	float eBullAriveTime[100];//弾が生きている時間
 	bool eBullArive[100];//弾が生きているかの判定
 };

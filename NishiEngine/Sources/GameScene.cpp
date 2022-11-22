@@ -48,7 +48,6 @@ GameScene::~GameScene()
 	{
 		safe_delete(rail[i]);
 	}
-
 	for (int i = 0; i < 100; i++)
 	{
 		safe_delete(enemy01[i]);
@@ -70,7 +69,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	assert(dxCommon);
 	assert(input);
 	assert(audio);
-
 	this->dxCommon = dxCommon;
 	this->input = input;
 	this->audio = audio;
@@ -111,11 +109,29 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		assert(0);
 		return;
 	}
+	if (!Sprite::LoadTexture(4, L"Resources/sprite/arrow.png"))
+	{//矢印
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(5, L"Resources/sprite/arrow_select.png"))
+	{//矢印、選択中
+		assert(0);
+		return;
+	}
 
 	//背景スプライト生成
 	titleSprite = Sprite::Create(1, { 0.0f,0.0f });//タイトル
 	gameSprite = Sprite::Create(2, { 0.0f,0.0f });//ゲーム
 	resultSprite = Sprite::Create(3, { 0.0f,0.0f });//リザルト
+	upArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印上のスプライト
+	upArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印上(選択中)のスプライト
+	downArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印下のスプライト
+	downArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印下(選択中)のスプライト
+	leftArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印左のスプライト
+	leftArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印左(選択中)のスプライト
+	rightArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印右のスプライト
+	rightArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印右(選択中)のスプライト
 
 	//パーティクルマネージャ生成
 	particleMan = ParticleManager::GetInstance();
@@ -136,10 +152,14 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	playerModel = Model::CreateFromOBJ("player");//プレイヤー
 	enemy01Model = Model::CreateFromOBJ("enemy");//敵1
 	enemy02Model = Model::CreateFromOBJ("enemy");//敵2
+	enemy03Model = Model::CreateFromOBJ("enemy");//敵3
+	enemy04Model = Model::CreateFromOBJ("enemy");//敵4
 	pBullModel = Model::CreateFromOBJ("pBullet");//プレイヤーの弾
 	eBullModel = Model::CreateFromOBJ("pBullet");//敵の弾
 	parts1Model = Model::CreateFromOBJ("parts");//落ちているパーツ1
 	parts2Model = Model::CreateFromOBJ("parts");//落ちているパーツ2
+	parts3Model = Model::CreateFromOBJ("parts");//落ちているパーツ3
+	parts4Model = Model::CreateFromOBJ("parts");//落ちているパーツ4
 	playerPartsModel = Model::CreateFromOBJ("playerParts");//プレイヤーのパーツ
 	waterModel = Model::CreateFromOBJ("ground");//水
 
@@ -167,21 +187,29 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		rail[i]->SetPosition(railPos[i]);
 		rail[i]->SetScale(railSca[i]);
 	}
-
 	for (int i = 0; i < 100; i++)
 	{//敵、弾、パーツなど
 		enemy01[i] = Object3d::Create(enemy01Model);
 		e01Pos[i] = deadPos;
 		e01Rot[i] = { 0.0f, 0.0f, 0.0f };
-		e01Sca[i] = { 1.0f, 1.0f, 1.0f };
+		eSca[i] = { 1.0f, 1.0f, 1.0f };
 		enemy01[i]->SetPosition(e01Pos[i]);
-		enemy01[i]->SetScale(e01Sca[i]);
+		enemy01[i]->SetScale(eSca[i]);
 		enemy02[i] = Object3d::Create(enemy02Model);
 		e02Pos[i] = deadPos;
 		e02Rot[i] = { 0.0f, 0.0f, 0.0f };
-		e02Sca[i] = { 1.0f, 1.0f, 1.0f };
 		enemy02[i]->SetPosition(e02Pos[i]);
-		enemy02[i]->SetScale(e02Sca[i]);
+		enemy02[i]->SetScale(eSca[i]);
+		enemy03[i] = Object3d::Create(enemy03Model);
+		e03Pos[i] = deadPos;
+		e03Rot[i] = { 0.0f, 0.0f, 0.0f };
+		enemy03[i]->SetPosition(e03Pos[i]);
+		enemy03[i]->SetScale(eSca[i]);
+		enemy04[i] = Object3d::Create(enemy04Model);
+		e04Pos[i] = deadPos;
+		e04Rot[i] = { 0.0f, 0.0f, 0.0f };
+		enemy04[i]->SetPosition(e04Pos[i]);
+		enemy04[i]->SetScale(eSca[i]);
 		pBull[i] = Object3d::Create(pBullModel);
 		pBullPos[i] = deadPos;
 		pBull[i]->SetPosition(eBullPos[i]);
@@ -195,9 +223,16 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		parts01[i]->SetScale(partsSca[i]);
 		parts02[i] = Object3d::Create(parts2Model);
 		parts02Pos[i] = deadPos;
-		partsSca[i] = { 1.0f, 1.0f, 1.0f };
 		parts02[i]->SetPosition(parts02Pos[i]);
 		parts02[i]->SetScale(partsSca[i]);
+		parts03[i] = Object3d::Create(parts3Model);
+		parts03Pos[i] = deadPos;
+		parts03[i]->SetPosition(parts03Pos[i]);
+		parts03[i]->SetScale(partsSca[i]);
+		parts04[i] = Object3d::Create(parts4Model);
+		parts04Pos[i] = deadPos;
+		parts04[i]->SetPosition(parts04Pos[i]);
+		parts04[i]->SetScale(partsSca[i]);
 		playerParts[i] = Object3d::Create(playerPartsModel);
 		pPartsPos[i] = deadPos;
 		pPartsRot[i] = { 0.0f, 0.0f, 0.0f };
@@ -210,26 +245,36 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	pBullSpead[0] = 1.5f;
 	pBullSpead[1] = 1.5f;
 	pBullSpead[2] = 1.0f;
+	pBullSpead[3] = 1.0f;
+	pBullSpead[4] = 0.0f;
 
 	//パーツのCDの最大値
-	partsInitCD[0] = 20.0f;
-	partsInitCD[1] = 20.0f;
-	partsInitCD[2] = 30.0f;
+	partsInitCD[0] = 40.0f;
+	partsInitCD[1] = 40.0f;
+	partsInitCD[2] = 160.0f;
+	partsInitCD[3] = 40.0f;
+	partsInitCD[4] = 100.0f;
 
 	//パーツの耐久値の最大値
 	partsInitHP[0] = 0.0f;
 	partsInitHP[1] = 10.0f;
-	partsInitHP[2] = 10.0f;
+	partsInitHP[2] = 3.0f;
+	partsInitHP[3] = 5.0f;
+	partsInitHP[4] = 5.0f;
 
 	//弾の生存時間の最大値
 	partsInitTime[0] = 40.0f;
 	partsInitTime[1] = 40.0f;
 	partsInitTime[2] = 60.0f;
+	partsInitTime[3] = 40.0f;
+	partsInitTime[4] = 0.0f;
 
 	//パーツの耐久値回復量
 	partsRecovery[0] = 0.0f;
-	partsRecovery[1] = 5.0f;
-	partsRecovery[2] = 5.0f;
+	partsRecovery[1] = 1.0f;
+	partsRecovery[2] = 1.0f;
+	partsRecovery[3] = 1.0f;
+	partsRecovery[4] = 1.0f;
 
 	//敵の速度
 	eBullSpead[0] = 1.0f;
@@ -254,8 +299,12 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		pPartsArive[i] = false;//プレイヤーのパーツが生きているかの判定
 		parts01Arive[i] = false;//パーツ1が生きているかの判定
 		parts02Arive[i] = false;//パーツ2が生きているかの判定
+		parts03Arive[i] = false;//パーツ3が生きているかの判定
+		parts04Arive[i] = false;//パーツ4が生きているかの判定
 		enemy01Arive[i] = false;//敵1が生きているかの判定
 		enemy02Arive[i] = false;//敵2が生きているかの判定
+		enemy03Arive[i] = false;//敵3が生きているかの判定
+		enemy04Arive[i] = false;//敵4が生きているかの判定
 	}
 
 	//カメラ注視点をセット
@@ -567,14 +616,49 @@ void GameScene::Update()
 		camera->SetTarget(cameraPos);//カメラの座標更新
 		
 		for (int i = 0; i < 100; i++)
-		{//プレイヤーのパーツが生きている場合
+		{
 			if (pPartsArive[i])
-			{
+			{//プレイヤーのパーツが生きている場合
 				pPartsPos[i].z += movePosZ;//プレイヤーのパーツ前
+			}
+			if (enemy01Arive[i])
+			{//敵01が生きている場合
+				if (e01Pos[i].z < deadLinePos)
+				{//画面外に退避
+					e01Pos[i] = deadPos;
+					enemy01Arive[i] = false;
+				}
+			}
+			if (enemy02Arive[i])
+			{//敵02が生きている場合
+				e02Pos[i].z += moveEPosZ;
+
+				if (e02Pos[i].z < deadLinePos)
+				{//画面外に退避
+					e02Pos[i] = deadPos;
+					enemy02Arive[i] = false;
+				}
+			}
+			if (enemy03Arive[i])
+			{//敵03が生きている場合
+				if (e03Pos[i].z < deadLinePos)
+				{//画面外に退避
+					e03Pos[i] = deadPos;
+					enemy03Arive[i] = false;
+				}
+			}
+			if (enemy04Arive[i])
+			{//敵04が生きている場合
+				if (e04Pos[i].z < deadLinePos)
+				{//画面外に退避
+					e04Pos[i] = deadPos;
+					enemy04Arive[i] = false;
+				}
 			}
 
 			playerParts[i]->SetPosition(pPartsPos[i]);//プレイヤーのパーツ座標更新
 			playerParts[i]->SetRotation(pPartsRot[i]);//プレイヤーのパーツ回転量更新
+			enemy02[i]->SetPosition(e02Pos[i]);//敵2の座標更新
 		}
 
 		//天球の回転
@@ -600,6 +684,19 @@ void GameScene::Update()
 				rotation.x += partsRotSpead;//回転させる
 				parts02[i]->SetRotation(rotation);
 			}
+			if (parts03Arive[i])
+			{//生きているパーツだけ回転させる
+				XMFLOAT3 rotation = parts03[i]->GetRotation();//現在の回転量を取得
+				rotation.z += partsRotSpead;//回転させる
+				parts03[i]->SetRotation(rotation);
+			}
+			if (parts04Arive[i])
+			{//生きているパーツだけ回転させる
+				XMFLOAT3 rotation = parts04[i]->GetRotation();//現在の回転量を取得
+				rotation.x += partsRotSpead;//回転させる
+				rotation.z += partsRotSpead;//回転させる
+				parts04[i]->SetRotation(rotation);
+			}
 		}
 
 		for (int i = 0; i < 100; i++)
@@ -622,6 +719,7 @@ void GameScene::Update()
 								pBullArive[i] = false;//弾消滅
 								pBullPos[i] = deadPos;//画面外に移動
 							}
+
 							enemy01Arive[j] = false;//敵消滅
 
 							for (int k = 0; k < 100; k++)
@@ -672,6 +770,70 @@ void GameScene::Update()
 							enemy02[j]->SetPosition(e02Pos[j]);
 						}
 					}
+					if (enemy03Arive[j])
+					{//敵の生存確認
+						float a = pBullPos[i].x - e03Pos[j].x;
+						float b = pBullPos[i].y - e03Pos[j].y;
+						float c = pBullPos[i].z - e03Pos[j].z;
+						float d = sqrt(a * a + b * b + c * c);
+
+						if (d <= 1)
+						{//当たっていたらお互い消滅
+							if (attackNum[i] != 2.0f)
+							{//貫通弾は消滅しない
+								pBullArive[i] = false;//弾消滅
+								pBullPos[i] = deadPos;//画面外に移動
+							}
+							enemy03Arive[j] = false;//敵消滅
+
+							for (int k = 0; k < 100; k++)
+							{
+								if (!parts03Arive[k])
+								{//パーツの生成
+									parts03Arive[k] = true;//パーツ生成
+									parts03Pos[k] = e03Pos[j];//敵の死亡位置にパーツ設置
+									parts03[k]->SetPosition(parts03Pos[k]);
+									break;
+								}
+							}
+
+							e03Pos[j] = deadPos;//画面外に移動
+							pBull[i]->SetPosition(pBullPos[i]);
+							enemy03[j]->SetPosition(e03Pos[j]);
+						}
+					}
+					if (enemy04Arive[j])
+					{//敵の生存確認
+						float a = pBullPos[i].x - e04Pos[j].x;
+						float b = pBullPos[i].y - e04Pos[j].y;
+						float c = pBullPos[i].z - e04Pos[j].z;
+						float d = sqrt(a * a + b * b + c * c);
+
+						if (d <= 1)
+						{//当たっていたらお互い消滅
+							if (attackNum[i] != 2.0f)
+							{//貫通弾は消滅しない
+								pBullArive[i] = false;//弾消滅
+								pBullPos[i] = deadPos;//画面外に移動
+							}
+							enemy04Arive[j] = false;//敵消滅
+
+							for (int k = 0; k < 100; k++)
+							{
+								if (!parts04Arive[k])
+								{//パーツの生成
+									parts04Arive[k] = true;//パーツ生成
+									parts04Pos[k] = e04Pos[j];//敵の死亡位置にパーツ設置
+									parts04[k]->SetPosition(parts04Pos[k]);
+									break;
+								}
+							}
+
+							e04Pos[j] = deadPos;//画面外に移動
+							pBull[i]->SetPosition(pBullPos[i]);
+							enemy04[j]->SetPosition(e04Pos[j]);
+						}
+					}
 				}
 			}
 		}
@@ -701,10 +863,7 @@ void GameScene::Update()
 								}
 								else
 								{//それ以外の場合は現在のパーツの耐久値を回復させる
-									if (partsHP[j] < partsInitHP[j])
-									{//最大値以上にはならない
-										partsHP[j] += partsRecovery[1];//パーツの耐久を回復
-									}
+									partsHP[j] += partsRecovery[1];//パーツの耐久を回復
 								}
 							}
 						}
@@ -736,10 +895,7 @@ void GameScene::Update()
 								}
 								else
 								{//それ以外の場合は現在のパーツの耐久値を回復させる
-									if (partsHP[j] < partsInitHP[j])
-									{//最大値以上にはならない
-										partsHP[j] += partsRecovery[1];//パーツの耐久を回復
-									}
+									partsHP[j] += partsRecovery[1];//パーツの耐久を回復
 								}
 							}
 						}
@@ -747,6 +903,70 @@ void GameScene::Update()
 						parts02Arive[i] = false;//パーツ2を消滅
 						parts02Pos[i] = deadPos;//画面外に移動
 						parts02[i]->SetPosition(parts02Pos[i]);
+					}
+				}
+				if (parts03Arive[i])
+				{//パーツ3の生存確認
+					float a = pPos.x - parts03Pos[i].x;
+					float b = pPos.y - parts03Pos[i].y;
+					float c = pPos.z - parts03Pos[i].z;
+					float d = sqrt(a * a + b * b + c * c);
+
+					if (d <= 1)
+					{//当たっていたら獲得
+						for (int j = 0; j < 4; j++)
+						{
+							if (partsSelect[j])
+							{
+								if (partsNum[j] == 0.0f)
+								{//通常弾以外のパーツの場合はスルー
+									partsNum[j] = 3.0f;//パーツの種類を設定
+									partsCD[j] = partsInitCD[2];//パーツのCDを設定
+									partsHP[j] = partsInitHP[2];//パーツの耐久を設定
+									isChange = true;//変更開始
+								}
+								else
+								{//それ以外の場合は現在のパーツの耐久値を回復させる
+									partsHP[j] += partsRecovery[2];//パーツの耐久を回復
+								}
+							}
+						}
+
+						parts03Arive[i] = false;//パーツ3を消滅
+						parts03Pos[i] = deadPos;//画面外に移動
+						parts03[i]->SetPosition(parts03Pos[i]);
+					}
+				}
+				if (parts04Arive[i])
+				{//パーツ4の生存確認
+					float a = pPos.x - parts04Pos[i].x;
+					float b = pPos.y - parts04Pos[i].y;
+					float c = pPos.z - parts04Pos[i].z;
+					float d = sqrt(a * a + b * b + c * c);
+
+					if (d <= 1)
+					{//当たっていたら獲得
+						for (int j = 0; j < 4; j++)
+						{
+							if (partsSelect[j])
+							{
+								if (partsNum[j] == 0.0f)
+								{//通常弾以外のパーツの場合はスルー
+									partsNum[j] = 4.0f;//パーツの種類を設定
+									partsCD[j] = partsInitCD[3];//パーツのCDを設定
+									partsHP[j] = partsInitHP[3];//パーツの耐久を設定
+									isChange = true;//変更開始
+								}
+								else
+								{//それ以外の場合は現在のパーツの耐久値を回復させる
+									partsHP[j] += partsRecovery[3];//パーツの耐久を回復
+								}
+							}
+						}
+
+						parts04Arive[i] = false;//パーツ4を消滅
+						parts04Pos[i] = deadPos;//画面外に移動
+						parts04[i]->SetPosition(parts04Pos[i]);
 					}
 				}
 			}
@@ -819,6 +1039,70 @@ void GameScene::Update()
 						}
 					}
 				}
+				if (enemy03Arive[i])
+				{//敵の生存確認
+					float a = pPos.x - e03Pos[i].x;
+					float b = pPos.y - e03Pos[i].y;
+					float c = pPos.z - e03Pos[i].z;
+					float d = sqrt(a * a + b * b + c * c);
+
+					if (d <= 1)
+					{//当たっていたら敵を消滅
+						enemy03Arive[i] = false;//敵を消滅
+						e03Pos[i] = deadPos;//画面外に移動
+						enemy03[i]->SetPosition(e03Pos[i]);
+
+						for (int j = 0; j < 4; j++)
+						{
+							if (partsSelect[j])
+							{
+								if (partsNum[j] != 0.0f)
+								{//選択中のパーツが破壊される
+									partsNum[j] = 0.0f;//パーツを通常弾に戻す
+									partsCD[j] = partsInitCD[0];//パーツのCDを通常弾に戻す
+									partsHP[j] = partsInitHP[0];//パーツのHPを初期化
+									isChange = true;//変更開始
+								}
+								else if (partsNum[j] == 0.0f)
+								{//ゲームオーバー
+									scene = End;
+								}
+							}
+						}
+					}
+				}
+				if (enemy04Arive[i])
+				{//敵の生存確認
+					float a = pPos.x - e04Pos[i].x;
+					float b = pPos.y - e04Pos[i].y;
+					float c = pPos.z - e04Pos[i].z;
+					float d = sqrt(a * a + b * b + c * c);
+
+					if (d <= 1)
+					{//当たっていたら敵を消滅
+						enemy04Arive[i] = false;//敵を消滅
+						e04Pos[i] = deadPos;//画面外に移動
+						enemy04[i]->SetPosition(e04Pos[i]);
+
+						for (int j = 0; j < 4; j++)
+						{
+							if (partsSelect[j])
+							{
+								if (partsNum[j] != 0.0f)
+								{//選択中のパーツが破壊される
+									partsNum[j] = 0.0f;//パーツを通常弾に戻す
+									partsCD[j] = partsInitCD[0];//パーツのCDを通常弾に戻す
+									partsHP[j] = partsInitHP[0];//パーツのHPを初期化
+									isChange = true;//変更開始
+								}
+								else if (partsNum[j] == 0.0f)
+								{//ゲームオーバー
+									scene = End;
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -845,7 +1129,7 @@ void GameScene::Update()
 						e01Pos[i].x = xPos;//敵のX座標を設定
 						e01Pos[i].y = enemyPosY;//敵のY座標を設定
 						e01Pos[i].z = pPos.z + enemyPosZ;//敵のZ座標を設定
-						enemySpawnTimer = 0;//タイマーをリセット
+						enemySpawnTimer = 0.0f;//タイマーをリセット
 						enemy01[i]->SetPosition(e01Pos[i]);
 						break;
 					}
@@ -866,8 +1150,50 @@ void GameScene::Update()
 						e02Pos[i].x = xPos;//敵のX座標を設定
 						e02Pos[i].y = enemyPosY;//敵のY座標を設定
 						e02Pos[i].z = pPos.z + enemyPosZ;//敵のZ座標を設定
-						enemySpawnTimer = 0;//タイマーをリセット
+						enemySpawnTimer = 0.0f;//タイマーをリセット
 						enemy02[i]->SetPosition(e02Pos[i]);
+						break;
+					}
+				}
+				else if (enemyNum == 2)
+				{//敵3を出現
+					if (!enemy03Arive[i])
+					{//画面上にいない敵を選択
+						//X座標をランダムに決定
+						int xPos = rand() % 5;
+						if (xPos == 0) { xPos = -8.0f; }
+						else if (xPos == 1) { xPos = -4.0f; }
+						else if (xPos == 2) { xPos = 0.0f; }
+						else if (xPos == 3) { xPos = 4.0f; }
+						else if (xPos == 4) { xPos = 8.0f; }
+
+						enemy03Arive[i] = true;//敵を生成
+						e03Pos[i].x = xPos;//敵のX座標を設定
+						e03Pos[i].y = enemyPosY;//敵のY座標を設定
+						e03Pos[i].z = pPos.z + enemyPosZ;//敵のZ座標を設定
+						enemySpawnTimer = 0.0f;//タイマーをリセット
+						enemy03[i]->SetPosition(e03Pos[i]);
+						break;
+					}
+				}
+				else if (enemyNum == 3)
+				{//敵4を出現
+					if (!enemy04Arive[i])
+					{//画面上にいない敵を選択
+						//X座標をランダムに決定
+						int xPos = rand() % 5;
+						if (xPos == 0) { xPos = -8.0f; }
+						else if (xPos == 1) { xPos = -4.0f; }
+						else if (xPos == 2) { xPos = 0.0f; }
+						else if (xPos == 3) { xPos = 4.0f; }
+						else if (xPos == 4) { xPos = 8.0f; }
+
+						enemy04Arive[i] = true;//敵を生成
+						e04Pos[i].x = xPos;//敵のX座標を設定
+						e04Pos[i].y = enemyPosY;//敵のY座標を設定
+						e04Pos[i].z = pPos.z + enemyPosZ;//敵のZ座標を設定
+						enemySpawnTimer = 0.0f;//タイマーをリセット
+						enemy04[i]->SetPosition(e04Pos[i]);
 						break;
 					}
 				}
@@ -896,11 +1222,11 @@ void GameScene::Update()
 			moveCount = 0.0f;//移動量をカウント
 			isMove = false;//移動中かどうか
 			moveDire = false;//移動の向き(false:左 true:右)
-			shotNum = 0;//攻撃パターン
+			shotNum = 0.0f;//攻撃パターン
 			isShot = false;//攻撃中かどうか
 			isChange = false;//プレイヤーのパーツ変更中かどうか
 			enemySpawnTimer = 0.0f;//敵の出現までのカウント
-			enemySpawnInterval = 60.0f;//敵出現までの間隔
+			enemySpawnInterval = 10.0f;//敵出現までの間隔
 			gameTime = 0.0f;//ゲーム経過時間
 			score = 0.0f;//進んだ距離
 
@@ -927,10 +1253,16 @@ void GameScene::Update()
 				e01Rot[i] = { 0.0f, 0.0f, 0.0f };//敵1の回転
 				e02Pos[i] = deadPos;//敵2の座標
 				e02Rot[i] = { 0.0f, 0.0f, 0.0f };//敵2の回転
+				e03Pos[i] = deadPos;//敵3の座標
+				e03Rot[i] = { 0.0f, 0.0f, 0.0f };//敵3の回転
+				e04Pos[i] = deadPos;//敵4の座標
+				e04Rot[i] = { 0.0f, 0.0f, 0.0f };//敵4の回転
 				pBullPos[i] = deadPos;//プレイヤーの弾の座標
 				eBullPos[i] = deadPos;//プレイヤーの弾の座標
 				parts01Pos[i] = deadPos;//パーツ1の座標
 				parts02Pos[i] = deadPos;//パーツ2の座標
+				parts03Pos[i] = deadPos;//パーツ3の座標
+				parts04Pos[i] = deadPos;//パーツ4の座標
 				pPartsPos[i] = deadPos;//プレイヤーのパーツの座標
 				pPartsRot[i] = { 0.0f, 0.0f, 0.0f };//プレイヤーのパーツの回転量
 				pBullAriveTime[i] = 0.0f;//弾が生きている時間
@@ -941,8 +1273,12 @@ void GameScene::Update()
 				pPartsArive[i] = false;//プレイヤーのパーツが生きているかの判定
 				parts01Arive[i] = false;//パーツ1が生きているかの判定
 				parts02Arive[i] = false;//パーツ2が生きているかの判定
+				parts03Arive[i] = false;//パーツ3が生きているかの判定
+				parts04Arive[i] = false;//パーツ4が生きているかの判定
 				enemy01Arive[i] = false;//敵1が生きているかの判定
 				enemy02Arive[i] = false;//敵2が生きているかの判定
+				enemy03Arive[i] = false;//敵3が生きているかの判定
+				enemy04Arive[i] = false;//敵4が生きているかの判定
 			}
 
 			scene = Title;//シーン移行
@@ -965,10 +1301,14 @@ void GameScene::Update()
 	{
 		enemy01[i]->Update();
 		enemy02[i]->Update();
+		enemy03[i]->Update();
+		enemy04[i]->Update();
 		pBull[i]->Update();
 		eBull[i]->Update();
 		parts01[i]->Update();
 		parts02[i]->Update();
+		parts03[i]->Update();
+		parts04[i]->Update();
 		playerParts[i]->Update();
 	}
 }
@@ -1012,10 +1352,14 @@ void GameScene::Draw()
 		{
 			if (enemy01Arive[i]) { enemy01[i]->Draw(); }
 			if (enemy02Arive[i]) { enemy02[i]->Draw(); }
+			if (enemy03Arive[i]) { enemy03[i]->Draw(); }
+			if (enemy04Arive[i]) { enemy04[i]->Draw(); }
 			if (pBullArive[i]) { pBull[i]->Draw(); }
 			if (eBullArive[i]) { eBull[i]->Draw(); }
 			if (parts01Arive[i]) { parts01[i]->Draw(); }
 			if (parts02Arive[i]) { parts02[i]->Draw(); }
+			if (parts03Arive[i]) { parts03[i]->Draw(); }
+			if (parts04Arive[i]) { parts04[i]->Draw(); }
 			if (pPartsArive[i]) { playerParts[i]->Draw(); }
 		}
 	}
