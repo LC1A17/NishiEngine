@@ -3,7 +3,7 @@
 
 //extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-const wchar_t WinApp::winName[] = L"LE3B_20_ニシハタ_コウキ";//名前
+const wchar_t WinApp::winName[] = L"SEA STORM";//名前
 const int WinApp::winWidth = 1280;//横幅
 const int WinApp::winHeight = 720;//縦幅
 

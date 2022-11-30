@@ -29,7 +29,7 @@ public://サブクラス
 	//ループ分岐用
 	enum Scene
 	{
-		Title, Game, End
+		Title, Select, Start, Game, End, Clear, Gameover
 	};
 
 private://静的メンバ変数
@@ -72,15 +72,28 @@ private://メンバ変数
 	Sprite* titleSprite = nullptr;//タイトル背景のスプライト
 	Sprite* gameSprite = nullptr;//ゲーム背景のスプライト
 	Sprite* resultSprite = nullptr;//リザルト背景のスプライト
-	Sprite* upArrowSprite = nullptr;//矢印上のスプライト
-	Sprite* upArrowSelectSprite = nullptr;//矢印上(選択中)のスプライト
-	Sprite* downArrowSprite = nullptr;//矢印下のスプライト
-	Sprite* downArrowSelectSprite = nullptr;//矢印下(選択中)のスプライト
-	Sprite* leftArrowSprite = nullptr;//矢印左のスプライト
-	Sprite* leftArrowSelectSprite = nullptr;//矢印左(選択中)のスプライト
-	Sprite* rightArrowSprite = nullptr;//矢印右のスプライト
-	Sprite* rightArrowSelectSprite = nullptr;//矢印右(選択中)のスプライト
-	
+	Sprite* arrowSprite = nullptr;//矢印のスプライト
+	Sprite* selectLogo = nullptr;//ステージセレクトのロゴ
+	Sprite* stage1Logo = nullptr;//ステージ1のロゴ
+	Sprite* stage2Logo = nullptr;//ステージ2のロゴ
+	Sprite* stage3Logo = nullptr;//ステージ3のロゴ
+	Sprite* titleLogo = nullptr;//タイトルロゴ
+	Sprite* clearLogo = nullptr;//クリアロゴ
+	Sprite* gameoverLogo = nullptr;//ゲームオーバーロゴ
+	Sprite* nextLogo = nullptr;//NEXTロゴ
+	Sprite* retryLogo = nullptr;//RETRYロゴ
+	Sprite* returnLogo = nullptr;//TITLEロゴ
+	Sprite* startLogo = nullptr;//Startロゴ
+	Sprite* aLogo = nullptr;//aロゴ
+	Sprite* dLogo = nullptr;//dロゴ
+	Sprite* leftLogo = nullptr;//←ロゴ
+	Sprite* rightLogo = nullptr;//→ロゴ
+	Sprite* spaceLogo = nullptr;//spaceロゴ
+	Sprite* lengthSprite = nullptr;//ステージのバー
+	Sprite* timeBarSprite = nullptr;//時間バー
+	Sprite* clearResultLogo = nullptr;//リザルト用クリアロゴ
+	Sprite* gameoverResultLogo = nullptr;//リザルト用ゲームオーバーロゴ
+
 	//モデル関連
 	Model* domeModel = nullptr;//天球のモデル
 	Model* railModel = nullptr;//レールのモデル
@@ -151,6 +164,11 @@ private://メンバ変数
 	XMFLOAT3 pPartsPos[100];//プレイヤーのパーツの座標
 	XMFLOAT3 pPartsRot[100];//プレイヤーのパーツの回転量
 	XMFLOAT3 waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
+	XMFLOAT2 arrowPos = { 280.0f, 210.0f };//矢印の座標
+	XMFLOAT2 startPos = { 363.0f, -150.0f };//スタートロゴの座標
+	XMFLOAT2 timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
+	XMFLOAT2 clearPos = { 40.0f, -150.0f };//クリアロゴの座標
+	XMFLOAT2 gameoverPos = { 153.0f, -150.0f };//ゲームオーバーロゴの座標
 
 	//シーン関連
 	int scene = Title;//ゲームシーン
@@ -181,14 +199,13 @@ private://メンバ変数
 
 	//初期化必要
 	float shotNum = 0.0f;//攻撃パターン
-	float partsNum[4];//装着中のパーツの種類
-	float partsCD[4];//パーツのCD
-	float partsHP[4];//パーツの耐久値
+	float partsNum = 0.0f;//装着中のパーツの種類
+	float partsCD = 20.0f;//パーツのCD
+	float partsHP = 0.0f;//パーツの耐久値
 	float pBullAriveTime[100];//弾が生きている時間
 	float attackNum[100];//弾の処理パターン
 	bool isShot = false;//攻撃中かどうか
 	bool isChange = false;//プレイヤーのパーツ変更中かどうか
-	bool partsSelect[4];//パーツが選択中かどうか
 	bool pBullArive[100];//弾が生きているかの判定
 	bool pPartsArive[100];//プレイヤーのパーツが生きているかの判定
 	bool parts01Arive[100];//パーツ1が生きているかの判定
@@ -217,6 +234,7 @@ private://メンバ変数
 	float waterPosSpead = 0.1f;//水の流れる速度
 	float partsRotSpead = 15.0f;//パーツの回転速度
 	float gameTimeLimit = 3600.0f;//ゲーム終了時間
+	float timeBarLength = 3.0f;//時間バー計算用
 
 	//初期化必要
 	float gameTime = 0.0f;//ゲーム経過時間
@@ -229,4 +247,29 @@ private://メンバ変数
 	//初期化必要
 	float eBullAriveTime[100];//弾が生きている時間
 	bool eBullArive[100];//弾が生きているかの判定
+
+	//タイトル関連
+	float spaceLogoCount = 0.0f;//ロゴ点滅カウント
+	float spaceLogoInterval = 25.0f;//ロゴ点滅間隔
+	bool spaceHide = false;//矢印の表示
+
+	//ステージセレクト関連
+	float selectNum = 1.0f;//選択中のステージ
+	float selectLogoCount = 0.0f;//ロゴ点滅カウント
+	float selectLogoInterval = 25.0f;//ロゴ点滅間隔
+	float arrowSpead = 10.0f;//矢印の移動速度
+	float arrowMoveCount = 0.0f;//矢印の移動カウント
+	float arrowMoveTime = 30.0f;//矢印の移動時間
+	bool selectMove = false;//選択中かどうか
+	bool selectHide = false;//矢印の表示
+	bool selectMoveDire = false;//移動方向
+
+	//スタート処理関連
+	bool startEnd = false;//スタート処理中か
+	bool startDire = false;//ロゴの移動方向
+	bool startStop = false;//スタートロゴが停止中か
+	float startSpead = 10.0f;//ロゴの移動速度
+	float startMoveCount = 0.0f;//ロゴの移動カウント
+	float startMoveTime = 40.0f;//ロゴの移動時間
+	float startStopTime = 60.0f;//ロゴの停止時間
 };

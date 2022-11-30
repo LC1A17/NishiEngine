@@ -119,19 +119,144 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 		assert(0);
 		return;
 	}
+	if (!Sprite::LoadTexture(6, L"Resources/sprite/stage_select.png"))
+	{//ステージセレクトロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(7, L"Resources/sprite/stage1.png"))
+	{//ステージ1
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(8, L"Resources/sprite/stage2.png"))
+	{//ステージ2
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(9, L"Resources/sprite/stage3.png"))
+	{//ステージ3
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(10, L"Resources/sprite/title_logo.png"))
+	{//タイトルロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(11, L"Resources/sprite/stage_clear.png"))
+	{//クリアロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(12, L"Resources/sprite/game_over.png"))
+	{//ゲームオーバーロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(13, L"Resources/sprite/next.png"))
+	{//ネクストロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(14, L"Resources/sprite/retry.png"))
+	{//リトライロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(15, L"Resources/sprite/title.png"))
+	{//タイトルロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(16, L"Resources/sprite/start.png"))
+	{//スタートロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(17, L"Resources/sprite/A.png"))
+	{//Aロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(18, L"Resources/sprite/D.png"))
+	{//Dロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(19, L"Resources/sprite/leftArrow.png"))
+	{//←ロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(20, L"Resources/sprite/rightArrow.png"))
+	{//→ロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(21, L"Resources/sprite/space.png"))
+	{//SPACEロゴ
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(22, L"Resources/sprite/length.png"))
+	{//ステージバー
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(23, L"Resources/sprite/timeBar.png"))
+	{//時間バー
+		assert(0);
+		return;
+	}
 
 	//背景スプライト生成
 	titleSprite = Sprite::Create(1, { 0.0f,0.0f });//タイトル
 	gameSprite = Sprite::Create(2, { 0.0f,0.0f });//ゲーム
 	resultSprite = Sprite::Create(3, { 0.0f,0.0f });//リザルト
-	upArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印上のスプライト
-	upArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印上(選択中)のスプライト
-	downArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印下のスプライト
-	downArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印下(選択中)のスプライト
-	leftArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印左のスプライト
-	leftArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印左(選択中)のスプライト
-	rightArrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印右のスプライト
-	rightArrowSelectSprite = Sprite::Create(5, { 0.0f,0.0f });//矢印右(選択中)のスプライト
+	arrowSprite = Sprite::Create(4, { 0.0f,0.0f });//矢印のスプライト
+	selectLogo = Sprite::Create(6, { 0.0f,0.0f });//ステージセレクトロゴのスプライト
+	stage1Logo = Sprite::Create(7, { 0.0f,0.0f });//ステージ1のスプライト
+	stage2Logo = Sprite::Create(8, { 0.0f,0.0f });//ステージ2のスプライト
+	stage3Logo = Sprite::Create(9, { 0.0f,0.0f });//ステージ3のスプライト
+	titleLogo = Sprite::Create(10, { 0.0f,0.0f });//タイトルロゴのスプライト
+	clearLogo = Sprite::Create(11, { 0.0f,0.0f });//クリアロゴのスプライト
+	gameoverLogo = Sprite::Create(12, { 0.0f,0.0f });//ゲームオーバーロゴのスプライト
+	nextLogo = Sprite::Create(13, { 0.0f,0.0f });//ネクストロゴのスプライト
+	retryLogo = Sprite::Create(14, { 0.0f,0.0f });//リトライロゴのスプライト
+	returnLogo = Sprite::Create(15, { 0.0f,0.0f });//タイトルロゴのスプライト
+	startLogo = Sprite::Create(16, { 0.0f,0.0f });//スタートロゴのスプライト
+	aLogo = Sprite::Create(17, { 0.0f,0.0f });//Aロゴのスプライト
+	dLogo = Sprite::Create(18, { 0.0f,0.0f });//Dロゴのスプライト
+	leftLogo = Sprite::Create(19, { 0.0f,0.0f });//←ロゴのスプライト
+	rightLogo = Sprite::Create(20, { 0.0f,0.0f });//→ロゴのスプライト
+	spaceLogo = Sprite::Create(21, { 0.0f,0.0f });//SPACEロゴのスプライト
+	lengthSprite = Sprite::Create(22, { 0.0f,0.0f });//ステージバー
+	timeBarSprite = Sprite::Create(23, { 0.0f,0.0f });//時間バー
+	clearResultLogo = Sprite::Create(11, { 0.0f,0.0f });//リザルト用クリアロゴのスプライト
+	gameoverResultLogo = Sprite::Create(12, { 0.0f,0.0f });//リザルト用ゲームオーバーロゴのスプライト
+
+	//スプライトの位置調整
+	selectLogo->SetPosition({ 43.5f, 50.0f });
+	stage1Logo->SetPosition({ 220.0f, 330.0f });
+	stage2Logo->SetPosition({ 520.0f, 330.0f });
+	stage3Logo->SetPosition({ 820.0f, 330.0f });
+	arrowSprite->SetPosition(arrowPos);
+	titleLogo->SetPosition({ 143.5f, 70.0f });
+	clearLogo->SetPosition(clearPos);
+	gameoverLogo->SetPosition(gameoverPos);
+	nextLogo->SetPosition({ 100.0f, 430.0f });
+	retryLogo->SetPosition({ 100.0f, 430.0f });
+	returnLogo->SetPosition({ 700.0f, 430.0f });
+	aLogo->SetPosition({ 505.0f, 580.0f });
+	dLogo->SetPosition({ 647.0f, 580.0f });
+	leftLogo->SetPosition({ 405.0f, 580.0f });
+	rightLogo->SetPosition({ 747.0f, 580.0f });
+	spaceLogo->SetPosition({ 448.0f, 500.0f });
+	lengthSprite->SetPosition({ 128.0f, 50.0f });
+	timeBarSprite->SetPosition(timeBarPos);
+	clearResultLogo->SetPosition({ 40.0f, 50.0f });
+	gameoverResultLogo->SetPosition({ 150.0f, 50.0f });
 
 	//パーティクルマネージャ生成
 	particleMan = ParticleManager::GetInstance();
@@ -279,16 +404,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	//敵の速度
 	eBullSpead[0] = 1.0f;
 
-	for (int i = 0; i < 4; i++)
-	{
-		partsNum[i] = 0.0f;//装着中のパーツの種類
-		partsCD[i] = 0.0f;//パーツのCD
-		partsHP[i] = 0.0f;//パーツの耐久値
-		partsSelect[i] = false;//パーツが選択中かどうか
-	}
-
-	partsSelect[0] = true;//0を選択中にする
-
 	for (int i = 0; i < 100; i++)
 	{	
 		pBullAriveTime[i] = 0.0f;//弾が生きている時間
@@ -319,64 +434,166 @@ void GameScene::Update()
 		//プレイヤー操作関連
 		if (input->TriggerKey(DIK_SPACE))
 		{//SPACE入力でゲームシーンへ移行
-			scene = Game;//シーン移行
+			spaceLogoCount = 0.0f;//ロゴ点滅カウント
+			spaceHide = false;//矢印の表示
+			scene = Select;//シーン移行
+		}
+		//ロゴ点滅
+		spaceLogoCount += 1.0f;
+		if (spaceLogoCount >= spaceLogoInterval)
+		{
+			spaceLogoCount = 0.0f;
+			if (spaceHide) { spaceHide = false; }
+			else if (!spaceHide) { spaceHide = true; }
+		}
+	}
+	else if (scene == Select)
+	{//ステージセレクト
+		if (!selectMove)
+		{//移動中以外
+			selectLogoCount += 1.0f;//カウント増加
+
+			if (!selectHide && (selectLogoCount >= selectLogoInterval))
+			{//カウントが一定になると点滅
+				selectLogoCount = 0.0f;
+				selectHide = true;
+			}
+			else if (selectHide && (selectLogoCount >= selectLogoInterval))
+			{//カウントが一定になると点滅
+				selectLogoCount = 0.0f;
+				selectHide = false;
+			}
+		}
+		if (input->PushKey(DIK_A) && !selectMove)
+		{//左に移動
+			if (selectNum > 1.0f)
+			{//一番左にいる場合は移動できない
+				moveDire = true;
+				selectMove = true;
+				selectNum -= 1.0f;
+			}
+		}
+		if (input->PushKey(DIK_D) && !selectMove)
+		{//右に移動
+			if (selectNum < 3.0f)
+			{//一番右にいる場合は移動できない
+				moveDire = false;
+				selectMove = true;
+				selectNum += 1.0f;
+			}
+		}
+		if (input->TriggerKey(DIK_SPACE) && !selectMove)
+		{
+			selectNum = 1.0f;//選択中のステージ
+			selectLogoCount = 0.0f;//ロゴ点滅カウント
+			arrowMoveCount = 0.0f;//矢印の移動カウント
+			selectHide = false;//矢印の表示
+			scene = Start;
+		}
+		if (selectMove)
+		{//移動中
+			selectHide = false;
+			selectLogoCount += 0.0f;//カウントリセット
+			arrowMoveCount += 1.0f;//移動量増加
+
+			//移動
+			if (moveDire) { arrowPos.x = arrowPos.x - arrowSpead; }
+			else if (!moveDire) { arrowPos.x = arrowPos.x + arrowSpead; }
+			arrowSprite->SetPosition({ arrowPos.x, arrowPos.y });
+
+			if (arrowMoveCount >= arrowMoveTime)
+			{//終了
+				arrowMoveCount = 0.0f;
+				selectMove = false;
+			}
+		}
+	}
+	else if (scene == Start)
+	{
+		//システム関連
+		//前に自動で進み続ける
+		pPos.z += movePosZ;//プレイヤー前
+		cameraPos.z += movePosZ;//カメラ前
+		domePos.z += movePosZ;//天球前
+		dome->SetPosition(domePos);//天球の座標更新
+		player->SetPosition(pPos);//プレイヤーの座標更新
+		player->SetRotation(pRot);//プレイヤーの回転量更新
+		camera->SetTarget(cameraPos);//カメラの座標更新
+
+		if (!startEnd)
+		{//ロゴ移動処理
+			startMoveCount += 1.0f;//移動量増加
+
+			//移動
+			if (!startDire)
+			{
+				startPos.y = startPos.y + startSpead;
+			}
+			else if (startDire)
+			{
+				startPos.y = startPos.y - startSpead;
+			}
+			startLogo->SetPosition({ startPos.x, startPos.y });
+
+			if (startMoveCount >= startMoveTime)
+			{//終了
+				startMoveCount = 0.0f;
+				startEnd = true;
+			}
+		}
+		else if (startEnd && startDire)
+		{//シーン移行処理
+
+			startEnd = false;//スタート処理中か
+			startDire = false;//ロゴの移動方向
+			startStop = false;//スタートロゴが停止中か
+			startMoveCount = 0.0f;//ロゴの移動カウント
+			scene = Game;
+		}
+		else if (startEnd)
+		{//ロゴ停止処理
+			startMoveCount += 1.0f;//移動量増加
+
+			if (startMoveCount >= startStopTime)
+			{//終了
+				startMoveCount = 0.0f;
+				startDire = true;
+				startEnd = false;
+			}
 		}
 	}
 	else if (scene == Game)
 	{//ゲーム
+		//タイム処理
+		timeBarPos.x = timeBarPos.x + (988 / gameTimeLimit);
+		timeBarSprite->SetPosition(timeBarPos);
+
 		//プレイヤー射撃関連
 		if (!isShot && !isMove)
-		{//レーン移動をしていない上でCDが残っている場合
-			if (input->TriggerKey(DIK_UP))
-			{//パーツスロット上選択
-				for (int i = 0; i < 4; i++) { partsSelect[i] = false; }//一旦すべてfalse
-				partsSelect[0] = true;//0をtrue
-				isChange = true;//変更開始
-			}
-			if (input->TriggerKey(DIK_DOWN))
-			{//パーツスロット下選択
-				for (int i = 0; i < 4; i++) { partsSelect[i] = false; }//一旦すべてfalse
-				partsSelect[1] = true;//1をtrue
-				isChange = true;//変更開始
-			}
-			if (input->TriggerKey(DIK_LEFT))
-			{//パーツスロット左選択
-				for (int i = 0; i < 4; i++) { partsSelect[i] = false; }//一旦すべてfalse
-				partsSelect[2] = true;//2をtrue
-				isChange = true;//変更開始
-			}
-			if (input->TriggerKey(DIK_RIGHT))
-			{//パーツスロット右選択
-				for (int i = 0; i < 4; i++) { partsSelect[i] = false; }//一旦すべてfalse
-				partsSelect[3] = true;//3をtrue
-				isChange = true;//変更開始
-			}
-			for (int i = 0; i < 4; i++)
-			{//CD処理
-				//選択中のパーツのCDを減らす
-				if (partsSelect[i]) { partsCD[i] -= 1.0f; }
-				if (partsCD[i] <= 0.0f)
-				{//選択中のパーツのCDが0になったら弾をセット
-					shotNum = partsNum[i];//装着中のパーツの弾をセット
-					isShot = true;//弾のセット開始
+		{//レーン移動をしていない上でCTが残っている場合
+			partsCD -= 1.0f;//選択中のパーツのCTを減らす
 
-					//通常弾以外のパーツの場合、耐久値を減少
-					if (partsNum[i] != 0.0f) { partsHP[i] -= 1.0f; }
-					if (partsNum[i] != 0.0f && partsHP[i] <= 0.0f)//パーツの耐久値が0になった場合
-					{//パーツの破壊処理
-						partsNum[i] = 0.0f;//パーツを通常弾に戻す
-						partsCD[i] = partsInitCD[0];//パーツのCDを通常弾に戻す
-						partsHP[i] = partsInitHP[0];//パーツのHPを初期化
-						isChange = true;//変更開始
-					}
-					//CDの再計算
-					if (partsNum[i] == 0.0f) { partsCD[i] = partsInitCD[0]; }
-					else if (partsNum[i] == 1.0f) { partsCD[i] = partsInitCD[1]; }
-					else if (partsNum[i] == 2.0f) { partsCD[i] = partsInitCD[2]; }
+			if (partsCD <= 0.0f)
+			{//パーツのCTが0になったら弾をセット
+				shotNum = partsNum;//パーツの種類に応じた弾をセット
+				isShot = true;//弾のセット開始
+
+				//通常弾以外のパーツの場合、耐久値を減少
+				if (partsNum != 0.0f) { partsHP -= 1.0f; }
+				if (partsNum != 0.0f && partsHP <= 0.0f)//パーツの耐久値が0になった場合
+				{//パーツの破壊処理
+					partsNum = 0.0f;//パーツを通常弾に戻す
+					partsCD = partsInitCD[0];//パーツのCTを通常弾に戻す
+					partsHP = partsInitHP[0];//パーツのHPを初期化
+					isChange = true;//変更開始
 				}
+				//CTの再計算
+				if (partsNum == 0.0f) { partsCD = partsInitCD[0]; }
+				else if (partsNum == 1.0f) { partsCD = partsInitCD[1]; }
+				else if (partsNum == 2.0f) { partsCD = partsInitCD[2]; }
 			}
 		}
-		else if (isShot && !isMove)//CDが0かつ移動をしていない場合
+		else if (isShot && !isMove)//CTが0かつ移動をしていない場合
 		{//弾のセット
 			if (shotNum == 0.0f)
 			{//通常弾
@@ -563,45 +780,39 @@ void GameScene::Update()
 		}
 		if (isChange)
 		{//プレイヤーのパーツ更新
-			for (int i = 0; i < 4; i++)
-			{
-				if (partsSelect[i])
-				{//選択中のパーツの情報を取得
-					if (partsNum[i] == 0.0f)
-					{//通常弾
-						for (int j = 0; j < 100; j++)
-						{//パーツを剥がす
-							if (pPartsArive[j])
-							{
-								pPartsArive[j] = false;//パーツを消滅
-								pPartsPos[j] = deadPos;//画面外に移動
-								playerParts[j]->SetPosition(pPartsPos[j]);
-							}
-						}
-					}
-					else if (partsNum[i] == 1.0f)
-					{//三列弾
-						for (int j = 0; j < 2; j++)
-						{//左右のレーンにパーツを設置
-							pPartsArive[j] = true;//パーツを生成
-							pPartsPos[j] = pPos;//プレイヤーの位置に一旦移動
-						}
-
-						pPartsPos[0].x -= 4.0f;//プレイヤーの左のレーンに移動
-						pPartsPos[1].x += 4.0f;//プレイヤーの右のレーンに移動
-
-						for (int j = 0; j < 2; j++)
-						{
-							playerParts[j]->SetPosition(pPartsPos[j]);
-						}
-					}
-					else if (partsNum[i] == 2.0f)
-					{//貫通弾
-						pPartsArive[0] = true;//パーツを生成
-						pPartsPos[0] = pPos;//プレイヤーの位置に移動
-						playerParts[0]->SetPosition(pPartsPos[0]);
+			if (partsNum == 0.0f)
+			{//通常弾
+				for (int j = 0; j < 100; j++)
+				{//パーツを剥がす
+					if (pPartsArive[j])
+					{
+						pPartsArive[j] = false;//パーツを消滅
+						pPartsPos[j] = deadPos;//画面外に移動
+						playerParts[j]->SetPosition(pPartsPos[j]);
 					}
 				}
+			}
+			else if (partsNum == 1.0f)
+			{//三列弾
+				for (int j = 0; j < 2; j++)
+				{//左右のレーンにパーツを設置
+					pPartsArive[j] = true;//パーツを生成
+					pPartsPos[j] = pPos;//プレイヤーの位置に一旦移動
+				}
+
+				pPartsPos[0].x -= 4.0f;//プレイヤーの左のレーンに移動
+				pPartsPos[1].x += 4.0f;//プレイヤーの右のレーンに移動
+
+				for (int j = 0; j < 2; j++)
+				{
+					playerParts[j]->SetPosition(pPartsPos[j]);
+				}
+			}
+			else if (partsNum == 2.0f)
+			{//貫通弾
+				pPartsArive[0] = true;//パーツを生成
+				pPartsPos[0] = pPos;//プレイヤーの位置に移動
+				playerParts[0]->SetPosition(pPartsPos[0]);
 			}
 		}
 
@@ -610,6 +821,7 @@ void GameScene::Update()
 		pPos.z += movePosZ;//プレイヤー前
 		cameraPos.z += movePosZ;//カメラ前
 		domePos.z += movePosZ;//天球前
+		deadLinePos += movePosZ;//敵消滅ライン
 		dome->SetPosition(domePos);//天球の座標更新
 		player->SetPosition(pPos);//プレイヤーの座標更新
 		player->SetRotation(pRot);//プレイヤーの回転量更新
@@ -655,10 +867,49 @@ void GameScene::Update()
 					enemy04Arive[i] = false;
 				}
 			}
+			if (parts01Arive[i])
+			{//パーツ1が生きている場合
+				if (parts01Pos[i].z < deadLinePos)
+				{//画面外に退避
+					parts01Pos[i] = deadPos;
+					parts01Arive[i] = false;
+				}
+			}
+			if (parts02Arive[i])
+			{//パーツ2が生きている場合
+				if (parts02Pos[i].z < deadLinePos)
+				{//画面外に退避
+					parts02Pos[i] = deadPos;
+					parts02Arive[i] = false;
+				}
+			}
+			if (parts03Arive[i])
+			{//パーツ3が生きている場合
+				if (parts03Pos[i].z < deadLinePos)
+				{//画面外に退避
+					parts03Pos[i] = deadPos;
+					parts03Arive[i] = false;
+				}
+			}
+			if (parts04Arive[i])
+			{//パーツ1が生きている場合
+				if (parts04Pos[i].z < deadLinePos)
+				{//画面外に退避
+					parts04Pos[i] = deadPos;
+					parts04Arive[i] = false;
+				}
+			}
 
 			playerParts[i]->SetPosition(pPartsPos[i]);//プレイヤーのパーツ座標更新
 			playerParts[i]->SetRotation(pPartsRot[i]);//プレイヤーのパーツ回転量更新
+			enemy01[i]->SetPosition(e01Pos[i]);//敵1の座標更新
 			enemy02[i]->SetPosition(e02Pos[i]);//敵2の座標更新
+			enemy03[i]->SetPosition(e03Pos[i]);//敵3の座標更新
+			enemy04[i]->SetPosition(e04Pos[i]);//敵4の座標更新
+			parts01[i]->SetPosition(parts01Pos[i]);//パーツ1の座標更新
+			parts02[i]->SetPosition(parts02Pos[i]);//パーツ2の座標更新
+			parts03[i]->SetPosition(parts03Pos[i]);//パーツ3の座標更新
+			parts04[i]->SetPosition(parts04Pos[i]);//パーツ4の座標更新
 		}
 
 		//天球の回転
@@ -850,22 +1101,16 @@ void GameScene::Update()
 
 					if (d <= 1)
 					{//当たっていたら獲得
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] == 0.0f)
-								{//通常弾以外のパーツの場合はスルー
-									partsNum[j] = 1.0f;//パーツの種類を設定
-									partsCD[j] = partsInitCD[1];//パーツのCDを設定
-									partsHP[j] = partsInitHP[1];//パーツの耐久を設定
-									isChange = true;//変更開始
-								}
-								else
-								{//それ以外の場合は現在のパーツの耐久値を回復させる
-									partsHP[j] += partsRecovery[1];//パーツの耐久を回復
-								}
-							}
+						if (partsNum == 0.0f)
+						{//通常弾以外のパーツの場合はスルー
+							partsNum = 1.0f;//パーツの種類を設定
+							partsCD = partsInitCD[1];//パーツのCDを設定
+							partsHP = partsInitHP[1];//パーツの耐久を設定
+							isChange = true;//変更開始
+						}
+						else
+						{//それ以外の場合は現在のパーツの耐久値を回復させる
+							partsHP += partsRecovery[1];//パーツの耐久を回復
 						}
 
 						parts01Arive[i] = false;//パーツ1を消滅
@@ -882,22 +1127,16 @@ void GameScene::Update()
 
 					if (d <= 1)
 					{//当たっていたら獲得
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] == 0.0f)
-								{//通常弾以外のパーツの場合はスルー
-									partsNum[j] = 2.0f;//パーツの種類を設定
-									partsCD[j] = partsInitCD[1];//パーツのCDを設定
-									partsHP[j] = partsInitHP[1];//パーツの耐久を設定
-									isChange = true;//変更開始
-								}
-								else
-								{//それ以外の場合は現在のパーツの耐久値を回復させる
-									partsHP[j] += partsRecovery[1];//パーツの耐久を回復
-								}
-							}
+						if (partsNum == 0.0f)
+						{//通常弾以外のパーツの場合はスルー
+							partsNum = 2.0f;//パーツの種類を設定
+							partsCD = partsInitCD[1];//パーツのCDを設定
+							partsHP = partsInitHP[1];//パーツの耐久を設定
+							isChange = true;//変更開始
+						}
+						else
+						{//それ以外の場合は現在のパーツの耐久値を回復させる
+							partsHP += partsRecovery[1];//パーツの耐久を回復
 						}
 
 						parts02Arive[i] = false;//パーツ2を消滅
@@ -916,19 +1155,16 @@ void GameScene::Update()
 					{//当たっていたら獲得
 						for (int j = 0; j < 4; j++)
 						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] == 0.0f)
-								{//通常弾以外のパーツの場合はスルー
-									partsNum[j] = 3.0f;//パーツの種類を設定
-									partsCD[j] = partsInitCD[2];//パーツのCDを設定
-									partsHP[j] = partsInitHP[2];//パーツの耐久を設定
-									isChange = true;//変更開始
-								}
-								else
-								{//それ以外の場合は現在のパーツの耐久値を回復させる
-									partsHP[j] += partsRecovery[2];//パーツの耐久を回復
-								}
+							if (partsNum == 0.0f)
+							{//通常弾以外のパーツの場合はスルー
+								partsNum = 3.0f;//パーツの種類を設定
+								partsCD = partsInitCD[2];//パーツのCDを設定
+								partsHP = partsInitHP[2];//パーツの耐久を設定
+								isChange = true;//変更開始
+							}
+							else
+							{//それ以外の場合は現在のパーツの耐久値を回復させる
+								partsHP += partsRecovery[2];//パーツの耐久を回復
 							}
 						}
 
@@ -946,22 +1182,16 @@ void GameScene::Update()
 
 					if (d <= 1)
 					{//当たっていたら獲得
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] == 0.0f)
-								{//通常弾以外のパーツの場合はスルー
-									partsNum[j] = 4.0f;//パーツの種類を設定
-									partsCD[j] = partsInitCD[3];//パーツのCDを設定
-									partsHP[j] = partsInitHP[3];//パーツの耐久を設定
-									isChange = true;//変更開始
-								}
-								else
-								{//それ以外の場合は現在のパーツの耐久値を回復させる
-									partsHP[j] += partsRecovery[3];//パーツの耐久を回復
-								}
-							}
+						if (partsNum == 0.0f)
+						{//通常弾以外のパーツの場合はスルー
+							partsNum = 4.0f;//パーツの種類を設定
+							partsCD = partsInitCD[3];//パーツのCDを設定
+							partsHP = partsInitHP[3];//パーツの耐久を設定
+							isChange = true;//変更開始
+						}
+						else
+						{//それ以外の場合は現在のパーツの耐久値を回復させる
+							partsHP += partsRecovery[3];//パーツの耐久を回復
 						}
 
 						parts04Arive[i] = false;//パーツ4を消滅
@@ -988,22 +1218,16 @@ void GameScene::Update()
 						e01Pos[i] = deadPos;//画面外に移動
 						enemy01[i]->SetPosition(e01Pos[i]);
 
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] != 0.0f)
-								{//選択中のパーツが破壊される
-									partsNum[j] = 0.0f;//パーツを通常弾に戻す
-									partsCD[j] = partsInitCD[0];//パーツのCDを通常弾に戻す
-									partsHP[j] = partsInitHP[0];//パーツのHPを初期化
-									isChange = true;//変更開始
-								}
-								else if (partsNum[j] == 0.0f)
-								{//ゲームオーバー
-									scene = End;
-								}
-							}
+						if (partsNum != 0.0f)
+						{//選択中のパーツが破壊される
+							partsNum = 0.0f;//パーツを通常弾に戻す
+							partsCD = partsInitCD[0];//パーツのCDを通常弾に戻す
+							partsHP = partsInitHP[0];//パーツのHPを初期化
+							isChange = true;//変更開始
+						}
+						else if (partsNum == 0.0f)
+						{//ゲームオーバー
+							scene = Gameover;
 						}
 					}
 				}
@@ -1020,22 +1244,16 @@ void GameScene::Update()
 						e02Pos[i] = deadPos;//画面外に移動
 						enemy02[i]->SetPosition(e02Pos[i]);
 
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] != 0.0f)
-								{//選択中のパーツが破壊される
-									partsNum[j] = 0.0f;//パーツを通常弾に戻す
-									partsCD[j] = partsInitCD[0];//パーツのCDを通常弾に戻す
-									partsHP[j] = partsInitHP[0];//パーツのHPを初期化
-									isChange = true;//変更開始
-								}
-								else if (partsNum[j] == 0.0f)
-								{//ゲームオーバー
-									scene = End;
-								}
-							}
+						if (partsNum != 0.0f)
+						{//選択中のパーツが破壊される
+							partsNum = 0.0f;//パーツを通常弾に戻す
+							partsCD = partsInitCD[0];//パーツのCDを通常弾に戻す
+							partsHP = partsInitHP[0];//パーツのHPを初期化
+							isChange = true;//変更開始
+						}
+						else if (partsNum == 0.0f)
+						{//ゲームオーバー
+							scene = Gameover;
 						}
 					}
 				}
@@ -1052,22 +1270,16 @@ void GameScene::Update()
 						e03Pos[i] = deadPos;//画面外に移動
 						enemy03[i]->SetPosition(e03Pos[i]);
 
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] != 0.0f)
-								{//選択中のパーツが破壊される
-									partsNum[j] = 0.0f;//パーツを通常弾に戻す
-									partsCD[j] = partsInitCD[0];//パーツのCDを通常弾に戻す
-									partsHP[j] = partsInitHP[0];//パーツのHPを初期化
-									isChange = true;//変更開始
-								}
-								else if (partsNum[j] == 0.0f)
-								{//ゲームオーバー
-									scene = End;
-								}
-							}
+						if (partsNum != 0.0f)
+						{//選択中のパーツが破壊される
+							partsNum = 0.0f;//パーツを通常弾に戻す
+							partsCD = partsInitCD[0];//パーツのCDを通常弾に戻す
+							partsHP = partsInitHP[0];//パーツのHPを初期化
+							isChange = true;//変更開始
+						}
+						else if (partsNum == 0.0f)
+						{//ゲームオーバー
+							scene = Gameover;
 						}
 					}
 				}
@@ -1084,22 +1296,16 @@ void GameScene::Update()
 						e04Pos[i] = deadPos;//画面外に移動
 						enemy04[i]->SetPosition(e04Pos[i]);
 
-						for (int j = 0; j < 4; j++)
-						{
-							if (partsSelect[j])
-							{
-								if (partsNum[j] != 0.0f)
-								{//選択中のパーツが破壊される
-									partsNum[j] = 0.0f;//パーツを通常弾に戻す
-									partsCD[j] = partsInitCD[0];//パーツのCDを通常弾に戻す
-									partsHP[j] = partsInitHP[0];//パーツのHPを初期化
-									isChange = true;//変更開始
-								}
-								else if (partsNum[j] == 0.0f)
-								{//ゲームオーバー
-									scene = End;
-								}
-							}
+						if (partsNum != 0.0f)
+						{//選択中のパーツが破壊される
+							partsNum = 0.0f;//パーツを通常弾に戻す
+							partsCD = partsInitCD[0];//パーツのCDを通常弾に戻す
+							partsHP = partsInitHP[0];//パーツのHPを初期化
+							isChange = true;//変更開始
+						}
+						else if (partsNum == 0.0f)
+						{//ゲームオーバー
+							scene = Gameover;
 						}
 					}
 				}
@@ -1112,7 +1318,7 @@ void GameScene::Update()
 		{//敵をスポーンさせる
 			for (int i = 0; i < 100; i++)
 			{
-				int enemyNum = rand() % 2;//出現させる敵の種類をランダムに選択
+				int enemyNum = rand() % 1;//出現させる敵の種類をランダムに選択
 				if (enemyNum == 0)
 				{//敵1を出現
 					if (!enemy01Arive[i])
@@ -1203,7 +1409,7 @@ void GameScene::Update()
 		//一定時間経過したらリザルトシーンに移行
 		score += 1.0f;//距離加算
 		gameTime += 1.0f;//タイム処理
-		if (gameTime >= gameTimeLimit) { scene = End; }
+		if (gameTime >= gameTimeLimit) { scene = Clear; }
 	}
 	else if (scene == End)
 	{//リザルト
@@ -1229,6 +1435,7 @@ void GameScene::Update()
 			enemySpawnInterval = 10.0f;//敵出現までの間隔
 			gameTime = 0.0f;//ゲーム経過時間
 			score = 0.0f;//進んだ距離
+			deadLinePos = -10.0f;//死亡ライン
 
 			//レーン
 			railPos[0] = { -8.0f, 2.0f, 0.0f };
@@ -1236,16 +1443,15 @@ void GameScene::Update()
 			railPos[2] = { 0.0f, 2.0f, 0.0f };
 			railPos[3] = { 4.0f, 2.0f, 0.0f };
 			railPos[4] = { 8.0f, 2.0f, 0.0f };
-			
-			for (int i = 0; i < 4; i++)
-			{
-				partsNum[i] = 0.0f;//装着中のパーツの種類
-				partsCD[i] = 0.0f;//パーツのCD
-				partsHP[i] = 0.0f;//パーツの耐久値
-				partsSelect[i] = false;//パーツが選択中かどうか
-			}
+		
+			partsNum = 0.0f;//装着中のパーツの種類
+			partsCD = 20.0f;//パーツのCT
+			partsHP = 0.0f;//パーツの耐久値
 
-			partsSelect[0] = true;//0を選択中にする
+			arrowPos = { 280.0f, 210.0f };//矢印の座標
+			arrowSprite->SetPosition(arrowPos);
+			timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
+			timeBarSprite->SetPosition(timeBarPos);
 
 			for (int i = 0; i < 100; i++)
 			{
@@ -1282,6 +1488,94 @@ void GameScene::Update()
 			}
 
 			scene = Title;//シーン移行
+		}
+	}
+	else if (scene == Clear)
+	{
+		if (!startEnd)
+		{//ロゴ移動処理
+			startMoveCount += 1.0f;//移動量増加
+
+			//移動
+			if (!startDire)
+			{
+				clearPos.y = clearPos.y + startSpead;
+			}
+			else if (startDire)
+			{
+				clearPos.y = clearPos.y - startSpead;
+			}
+			clearLogo->SetPosition(clearPos);
+
+			if (startMoveCount >= startMoveTime)
+			{//終了
+				startMoveCount = 0.0f;
+				startEnd = true;
+			}
+		}
+		else if (startEnd && startDire)
+		{//シーン移行処理
+
+			startEnd = false;//スタート処理中か
+			startDire = false;//ロゴの移動方向
+			startStop = false;//スタートロゴが停止中か
+			startMoveCount = 0.0f;//ロゴの移動カウント
+			scene = End;
+		}
+		else if (startEnd)
+		{//ロゴ停止処理
+			startMoveCount += 1.0f;//移動量増加
+
+			if (startMoveCount >= startStopTime)
+			{//終了
+				startMoveCount = 0.0f;
+				startDire = true;
+				startEnd = false;
+			}
+		}
+	}
+	else if (scene == Gameover)
+	{
+		if (!startEnd)
+		{//ロゴ移動処理
+			startMoveCount += 1.0f;//移動量増加
+
+			//移動
+			if (!startDire)
+			{
+				gameoverPos.y = gameoverPos.y + startSpead;
+			}
+			else if (startDire)
+			{
+				gameoverPos.y = gameoverPos.y - startSpead;
+			}
+			gameoverLogo->SetPosition(gameoverPos);
+
+			if (startMoveCount >= startMoveTime)
+			{//終了
+				startMoveCount = 0.0f;
+				startEnd = true;
+			}
+		}
+		else if (startEnd && startDire)
+		{//シーン移行処理
+
+			startEnd = false;//スタート処理中か
+			startDire = false;//ロゴの移動方向
+			startStop = false;//スタートロゴが停止中か
+			startMoveCount = 0.0f;//ロゴの移動カウント
+			scene = End;
+		}
+		else if (startEnd)
+		{//ロゴ停止処理
+			startMoveCount += 1.0f;//移動量増加
+
+			if (startMoveCount >= startStopTime)
+			{//終了
+				startMoveCount = 0.0f;
+				startDire = true;
+				startEnd = false;
+			}
 		}
 	}
 
@@ -1322,9 +1616,42 @@ void GameScene::Draw()
 	Sprite::PreDraw(cmdList);//背景スプライト描画前処理
 
 	//背景スプライト描画
-	if (scene == Title) { titleSprite->Draw(); }
-	else if (scene == Game) { gameSprite->Draw(); }
+	gameSprite->Draw();
+
+	if (scene == Title)
+	{
+		titleLogo->Draw();
+		if (!spaceHide) { spaceLogo->Draw(); }
+	}
+	else if (scene == Select)
+	{
+		selectLogo->Draw();
+		stage1Logo->Draw();
+		stage2Logo->Draw();
+		stage3Logo->Draw();
+		aLogo->Draw();
+		dLogo->Draw();
+		leftLogo->Draw();
+		rightLogo->Draw();
+		if (!selectHide) { arrowSprite->Draw(); }
+	}
+	else if (scene == Start || scene == Game || scene == Clear || scene == Gameover)
+	{
+		
+	}
 	else if (scene == End) { resultSprite->Draw(); }
+	else if (scene == Clear)
+	{
+		//clearLogo->Draw();
+		//nextLogo->Draw();
+		//returnLogo->Draw();
+	}
+	else if (scene == Gameover)
+	{
+		//gameoverLogo->Draw();
+		//retryLogo->Draw();
+		//returnLogo->Draw();
+	}
 
 	Sprite::PostDraw();//スプライト描画後処理
 	dxCommon->ClearDepthBuffer();//深度バッファクリア
@@ -1332,14 +1659,14 @@ void GameScene::Draw()
 	//水オブジェクトの描画
 	WaterObject::PreDraw(cmdList);//水オブジェクト描画前処理
 
-	if (scene == Game) { waterPlane->Draw(); }
+	if (scene == Start || scene == Game || scene == Clear || scene == Gameover) { waterPlane->Draw(); }
 	
 	WaterObject::PostDraw();//水オブジェクト描画後処理
 
 	//3Dオブジェクトの描画
 	Object3d::PreDraw(cmdList);//オブジェクト描画前処理
 
-	if (scene == Game)
+	if (scene == Start || scene == Game || scene == Clear || scene == Gameover)
 	{
 		dome->Draw();
 		player->Draw();
@@ -1372,6 +1699,15 @@ void GameScene::Draw()
 	//前景スプライト描画
 	//前景スプライト描画前処理
 	Sprite::PreDraw(cmdList);
+
+	if (scene == Start || scene == Game || scene == Clear || scene == Gameover)
+	{
+		clearLogo->Draw();
+		gameoverLogo->Draw();
+		lengthSprite->Draw();
+		startLogo->Draw();
+		timeBarSprite->Draw();
+	}
 
 	//デバッグテキストの描画
 	debugText->DrawAll(cmdList);
