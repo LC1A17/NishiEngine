@@ -245,9 +245,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	titleLogo->SetPosition({ 143.5f, 70.0f });
 	clearLogo->SetPosition(clearPos);
 	gameoverLogo->SetPosition(gameoverPos);
-	nextLogo->SetPosition({ 100.0f, 430.0f });
-	retryLogo->SetPosition({ 100.0f, 430.0f });
-	returnLogo->SetPosition({ 700.0f, 430.0f });
+	nextLogo->SetPosition({ 77.5f, 430.0f });
+	retryLogo->SetPosition({ 49.0f, 430.0f });
+	returnLogo->SetPosition({ 705.0f, 430.0f });
 	aLogo->SetPosition({ 505.0f, 580.0f });
 	dLogo->SetPosition({ 647.0f, 580.0f });
 	leftLogo->SetPosition({ 405.0f, 580.0f });
@@ -256,7 +256,7 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	lengthSprite->SetPosition({ 128.0f, 50.0f });
 	timeBarSprite->SetPosition(timeBarPos);
 	clearResultLogo->SetPosition({ 40.0f, 50.0f });
-	gameoverResultLogo->SetPosition({ 150.0f, 50.0f });
+	gameoverResultLogo->SetPosition({ 153.0f, 50.0f });
 
 	//パーティクルマネージャ生成
 	particleMan = ParticleManager::GetInstance();
@@ -1520,7 +1520,7 @@ void GameScene::Update()
 			startDire = false;//ロゴの移動方向
 			startStop = false;//スタートロゴが停止中か
 			startMoveCount = 0.0f;//ロゴの移動カウント
-			scene = End;
+			scene = ClearResult;
 		}
 		else if (startEnd)
 		{//ロゴ停止処理
@@ -1564,7 +1564,7 @@ void GameScene::Update()
 			startDire = false;//ロゴの移動方向
 			startStop = false;//スタートロゴが停止中か
 			startMoveCount = 0.0f;//ロゴの移動カウント
-			scene = End;
+			scene = GameoverResult;
 		}
 		else if (startEnd)
 		{//ロゴ停止処理
@@ -1575,6 +1575,418 @@ void GameScene::Update()
 				startMoveCount = 0.0f;
 				startDire = true;
 				startEnd = false;
+			}
+		}
+	}
+	else if (scene == ClearResult)
+	{
+		clearSelectCount += 1.0f;//カウント増加
+
+		if (!clearSelectHide && (clearSelectCount >= clearSelectInterval))
+		{//カウントが一定になると点滅
+			clearSelectCount = 0.0f;
+			clearSelectHide = true;
+		}
+		else if (clearSelectHide && (clearSelectCount >= clearSelectInterval))
+		{//カウントが一定になると点滅
+			clearSelectCount = 0.0f;
+			clearSelectHide = false;
+		}
+		//プレイヤー操作関連
+		if (input->PushKey(DIK_A))
+		{//左に移動
+			if (clearSelect)
+			{//一番左にいる場合は移動できない
+				clearSelectCount = 0.0f;//ロゴ点滅カウント
+				clearSelect = false;
+				clearSelectHide = false;
+			}
+		}
+		if (input->PushKey(DIK_D))
+		{//右に移動
+			if (!clearSelect)
+			{//一番右にいる場合は移動できない
+				clearSelectCount = 0.0f;//ロゴ点滅カウント
+				clearSelect = true;
+				clearSelectHide = false;
+			}
+		}
+		if (input->TriggerKey(DIK_SPACE))
+		{//SPACE入力でタイトルシーンへ移行
+			//初期化処理
+			if (!clearSelect)
+			{
+				cameraPos = { 0.0f, 4.5f, 0.0f };//カメラの座標
+				domePos = { 0.0f, 0.0f, 0.0f };//天球の座標
+				domeRot = { 0.0f, 0.0f, 0.0f };//天球の回転量
+				pPos = { 0.0f, 2.0f, 3.0f };//プレイヤーの座標
+				pRot = { 0.0f, 0.0f, 0.0f };//プレイヤーの回転量
+				waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
+				pRail = 2.0f;//プレイヤーのいるレール(一番左から0)
+				moveTime = 0.0f;//移動時間をカウント
+				moveCount = 0.0f;//移動量をカウント
+				isMove = false;//移動中かどうか
+				moveDire = false;//移動の向き(false:左 true:右)
+				shotNum = 0.0f;//攻撃パターン
+				isShot = false;//攻撃中かどうか
+				isChange = false;//プレイヤーのパーツ変更中かどうか
+				enemySpawnTimer = 0.0f;//敵の出現までのカウント
+				enemySpawnInterval = 10.0f;//敵出現までの間隔
+				gameTime = 0.0f;//ゲーム経過時間
+				score = 0.0f;//進んだ距離
+				deadLinePos = -10.0f;//死亡ライン
+
+				//レーン
+				railPos[0] = { -8.0f, 2.0f, 0.0f };
+				railPos[1] = { -4.0f, 2.0f, 0.0f };
+				railPos[2] = { 0.0f, 2.0f, 0.0f };
+				railPos[3] = { 4.0f, 2.0f, 0.0f };
+				railPos[4] = { 8.0f, 2.0f, 0.0f };
+
+				partsNum = 0.0f;//装着中のパーツの種類
+				partsCD = 20.0f;//パーツのCT
+				partsHP = 0.0f;//パーツの耐久値
+
+				arrowPos = { 280.0f, 210.0f };//矢印の座標
+				arrowSprite->SetPosition(arrowPos);
+				timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
+				timeBarSprite->SetPosition(timeBarPos);
+
+				//クリア処理関連
+				clearSelectCount = 0.0f;//ロゴ点滅カウント
+				clearSelect = false;//選択肢の位置
+				clearSelectHide = false;//選択肢の表示
+
+				//ゲームオーバー処理関連
+				gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+				gameoverSelect = false;//選択肢の位置
+				gameoverSelectHide = false;//選択肢の表示
+
+				for (int i = 0; i < 100; i++)
+				{
+					e01Pos[i] = deadPos;//敵1の座標
+					e01Rot[i] = { 0.0f, 0.0f, 0.0f };//敵1の回転
+					e02Pos[i] = deadPos;//敵2の座標
+					e02Rot[i] = { 0.0f, 0.0f, 0.0f };//敵2の回転
+					e03Pos[i] = deadPos;//敵3の座標
+					e03Rot[i] = { 0.0f, 0.0f, 0.0f };//敵3の回転
+					e04Pos[i] = deadPos;//敵4の座標
+					e04Rot[i] = { 0.0f, 0.0f, 0.0f };//敵4の回転
+					pBullPos[i] = deadPos;//プレイヤーの弾の座標
+					eBullPos[i] = deadPos;//プレイヤーの弾の座標
+					parts01Pos[i] = deadPos;//パーツ1の座標
+					parts02Pos[i] = deadPos;//パーツ2の座標
+					parts03Pos[i] = deadPos;//パーツ3の座標
+					parts04Pos[i] = deadPos;//パーツ4の座標
+					pPartsPos[i] = deadPos;//プレイヤーのパーツの座標
+					pPartsRot[i] = { 0.0f, 0.0f, 0.0f };//プレイヤーのパーツの回転量
+					pBullAriveTime[i] = 0.0f;//弾が生きている時間
+					eBullAriveTime[i] = 0.0f;//弾が生きている時間
+					attackNum[i] = 0.0f;//弾の処理パターン
+					pBullArive[i] = false;//弾が生きているかの判定
+					eBullArive[i] = false;//弾が生きているかの判定
+					pPartsArive[i] = false;//プレイヤーのパーツが生きているかの判定
+					parts01Arive[i] = false;//パーツ1が生きているかの判定
+					parts02Arive[i] = false;//パーツ2が生きているかの判定
+					parts03Arive[i] = false;//パーツ3が生きているかの判定
+					parts04Arive[i] = false;//パーツ4が生きているかの判定
+					enemy01Arive[i] = false;//敵1が生きているかの判定
+					enemy02Arive[i] = false;//敵2が生きているかの判定
+					enemy03Arive[i] = false;//敵3が生きているかの判定
+					enemy04Arive[i] = false;//敵4が生きているかの判定
+				}
+
+				scene = Title;//シーン移行
+			}
+			else if (clearSelect)
+			{
+				cameraPos = { 0.0f, 4.5f, 0.0f };//カメラの座標
+				domePos = { 0.0f, 0.0f, 0.0f };//天球の座標
+				domeRot = { 0.0f, 0.0f, 0.0f };//天球の回転量
+				pPos = { 0.0f, 2.0f, 3.0f };//プレイヤーの座標
+				pRot = { 0.0f, 0.0f, 0.0f };//プレイヤーの回転量
+				waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
+				pRail = 2.0f;//プレイヤーのいるレール(一番左から0)
+				moveTime = 0.0f;//移動時間をカウント
+				moveCount = 0.0f;//移動量をカウント
+				isMove = false;//移動中かどうか
+				moveDire = false;//移動の向き(false:左 true:右)
+				shotNum = 0.0f;//攻撃パターン
+				isShot = false;//攻撃中かどうか
+				isChange = false;//プレイヤーのパーツ変更中かどうか
+				enemySpawnTimer = 0.0f;//敵の出現までのカウント
+				enemySpawnInterval = 10.0f;//敵出現までの間隔
+				gameTime = 0.0f;//ゲーム経過時間
+				score = 0.0f;//進んだ距離
+				deadLinePos = -10.0f;//死亡ライン
+
+				//レーン
+				railPos[0] = { -8.0f, 2.0f, 0.0f };
+				railPos[1] = { -4.0f, 2.0f, 0.0f };
+				railPos[2] = { 0.0f, 2.0f, 0.0f };
+				railPos[3] = { 4.0f, 2.0f, 0.0f };
+				railPos[4] = { 8.0f, 2.0f, 0.0f };
+
+				partsNum = 0.0f;//装着中のパーツの種類
+				partsCD = 20.0f;//パーツのCT
+				partsHP = 0.0f;//パーツの耐久値
+
+				arrowPos = { 280.0f, 210.0f };//矢印の座標
+				arrowSprite->SetPosition(arrowPos);
+				timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
+				timeBarSprite->SetPosition(timeBarPos);
+
+				//クリア処理関連
+				clearSelectCount = 0.0f;//ロゴ点滅カウント
+				clearSelect = false;//選択肢の位置
+				clearSelectHide = false;//選択肢の表示
+
+				//ゲームオーバー処理関連
+				gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+				gameoverSelect = false;//選択肢の位置
+				gameoverSelectHide = false;//選択肢の表示
+
+				for (int i = 0; i < 100; i++)
+				{
+					e01Pos[i] = deadPos;//敵1の座標
+					e01Rot[i] = { 0.0f, 0.0f, 0.0f };//敵1の回転
+					e02Pos[i] = deadPos;//敵2の座標
+					e02Rot[i] = { 0.0f, 0.0f, 0.0f };//敵2の回転
+					e03Pos[i] = deadPos;//敵3の座標
+					e03Rot[i] = { 0.0f, 0.0f, 0.0f };//敵3の回転
+					e04Pos[i] = deadPos;//敵4の座標
+					e04Rot[i] = { 0.0f, 0.0f, 0.0f };//敵4の回転
+					pBullPos[i] = deadPos;//プレイヤーの弾の座標
+					eBullPos[i] = deadPos;//プレイヤーの弾の座標
+					parts01Pos[i] = deadPos;//パーツ1の座標
+					parts02Pos[i] = deadPos;//パーツ2の座標
+					parts03Pos[i] = deadPos;//パーツ3の座標
+					parts04Pos[i] = deadPos;//パーツ4の座標
+					pPartsPos[i] = deadPos;//プレイヤーのパーツの座標
+					pPartsRot[i] = { 0.0f, 0.0f, 0.0f };//プレイヤーのパーツの回転量
+					pBullAriveTime[i] = 0.0f;//弾が生きている時間
+					eBullAriveTime[i] = 0.0f;//弾が生きている時間
+					attackNum[i] = 0.0f;//弾の処理パターン
+					pBullArive[i] = false;//弾が生きているかの判定
+					eBullArive[i] = false;//弾が生きているかの判定
+					pPartsArive[i] = false;//プレイヤーのパーツが生きているかの判定
+					parts01Arive[i] = false;//パーツ1が生きているかの判定
+					parts02Arive[i] = false;//パーツ2が生きているかの判定
+					parts03Arive[i] = false;//パーツ3が生きているかの判定
+					parts04Arive[i] = false;//パーツ4が生きているかの判定
+					enemy01Arive[i] = false;//敵1が生きているかの判定
+					enemy02Arive[i] = false;//敵2が生きているかの判定
+					enemy03Arive[i] = false;//敵3が生きているかの判定
+					enemy04Arive[i] = false;//敵4が生きているかの判定
+				}
+
+				scene = Title;//シーン移行
+			}
+		}
+	}
+	else if (scene == GameoverResult)
+	{
+		gameoverSelectCount += 1.0f;//カウント増加
+
+		if (!gameoverSelectHide && (gameoverSelectCount >= gameoverSelectInterval))
+		{//カウントが一定になると点滅
+			gameoverSelectCount = 0.0f;
+			gameoverSelectHide = true;
+		}
+		else if (gameoverSelectHide && (gameoverSelectCount >= gameoverSelectInterval))
+		{//カウントが一定になると点滅
+			gameoverSelectCount = 0.0f;
+			gameoverSelectHide = false;
+		}
+		//プレイヤー操作関連
+		if (input->PushKey(DIK_A))
+		{//左に移動
+			if (gameoverSelect)
+			{//一番左にいる場合は移動できない
+				gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+				gameoverSelect = false;
+				gameoverSelectHide = false;
+			}
+		}
+		if (input->PushKey(DIK_D))
+		{//右に移動
+			if (!gameoverSelect)
+			{//一番右にいる場合は移動できない
+				gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+				gameoverSelect = true;
+				gameoverSelectHide = false;
+			}
+		}
+		if (input->TriggerKey(DIK_SPACE))
+		{//SPACE入力でタイトルシーンへ移行
+			//初期化処理
+			if (!gameoverSelect)
+			{
+				cameraPos = { 0.0f, 4.5f, 0.0f };//カメラの座標
+				domePos = { 0.0f, 0.0f, 0.0f };//天球の座標
+				domeRot = { 0.0f, 0.0f, 0.0f };//天球の回転量
+				pPos = { 0.0f, 2.0f, 3.0f };//プレイヤーの座標
+				pRot = { 0.0f, 0.0f, 0.0f };//プレイヤーの回転量
+				waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
+				pRail = 2.0f;//プレイヤーのいるレール(一番左から0)
+				moveTime = 0.0f;//移動時間をカウント
+				moveCount = 0.0f;//移動量をカウント
+				isMove = false;//移動中かどうか
+				moveDire = false;//移動の向き(false:左 true:右)
+				shotNum = 0.0f;//攻撃パターン
+				isShot = false;//攻撃中かどうか
+				isChange = false;//プレイヤーのパーツ変更中かどうか
+				enemySpawnTimer = 0.0f;//敵の出現までのカウント
+				enemySpawnInterval = 10.0f;//敵出現までの間隔
+				gameTime = 0.0f;//ゲーム経過時間
+				score = 0.0f;//進んだ距離
+				deadLinePos = -10.0f;//死亡ライン
+
+				//レーン
+				railPos[0] = { -8.0f, 2.0f, 0.0f };
+				railPos[1] = { -4.0f, 2.0f, 0.0f };
+				railPos[2] = { 0.0f, 2.0f, 0.0f };
+				railPos[3] = { 4.0f, 2.0f, 0.0f };
+				railPos[4] = { 8.0f, 2.0f, 0.0f };
+
+				partsNum = 0.0f;//装着中のパーツの種類
+				partsCD = 20.0f;//パーツのCT
+				partsHP = 0.0f;//パーツの耐久値
+
+				arrowPos = { 280.0f, 210.0f };//矢印の座標
+				arrowSprite->SetPosition(arrowPos);
+				timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
+				timeBarSprite->SetPosition(timeBarPos);
+
+				//クリア処理関連
+				clearSelectCount = 0.0f;//ロゴ点滅カウント
+				clearSelect = false;//選択肢の位置
+				clearSelectHide = false;//選択肢の表示
+
+				//ゲームオーバー処理関連
+				gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+				gameoverSelect = false;//選択肢の位置
+				gameoverSelectHide = false;//選択肢の表示
+
+				for (int i = 0; i < 100; i++)
+				{
+					e01Pos[i] = deadPos;//敵1の座標
+					e01Rot[i] = { 0.0f, 0.0f, 0.0f };//敵1の回転
+					e02Pos[i] = deadPos;//敵2の座標
+					e02Rot[i] = { 0.0f, 0.0f, 0.0f };//敵2の回転
+					e03Pos[i] = deadPos;//敵3の座標
+					e03Rot[i] = { 0.0f, 0.0f, 0.0f };//敵3の回転
+					e04Pos[i] = deadPos;//敵4の座標
+					e04Rot[i] = { 0.0f, 0.0f, 0.0f };//敵4の回転
+					pBullPos[i] = deadPos;//プレイヤーの弾の座標
+					eBullPos[i] = deadPos;//プレイヤーの弾の座標
+					parts01Pos[i] = deadPos;//パーツ1の座標
+					parts02Pos[i] = deadPos;//パーツ2の座標
+					parts03Pos[i] = deadPos;//パーツ3の座標
+					parts04Pos[i] = deadPos;//パーツ4の座標
+					pPartsPos[i] = deadPos;//プレイヤーのパーツの座標
+					pPartsRot[i] = { 0.0f, 0.0f, 0.0f };//プレイヤーのパーツの回転量
+					pBullAriveTime[i] = 0.0f;//弾が生きている時間
+					eBullAriveTime[i] = 0.0f;//弾が生きている時間
+					attackNum[i] = 0.0f;//弾の処理パターン
+					pBullArive[i] = false;//弾が生きているかの判定
+					eBullArive[i] = false;//弾が生きているかの判定
+					pPartsArive[i] = false;//プレイヤーのパーツが生きているかの判定
+					parts01Arive[i] = false;//パーツ1が生きているかの判定
+					parts02Arive[i] = false;//パーツ2が生きているかの判定
+					parts03Arive[i] = false;//パーツ3が生きているかの判定
+					parts04Arive[i] = false;//パーツ4が生きているかの判定
+					enemy01Arive[i] = false;//敵1が生きているかの判定
+					enemy02Arive[i] = false;//敵2が生きているかの判定
+					enemy03Arive[i] = false;//敵3が生きているかの判定
+					enemy04Arive[i] = false;//敵4が生きているかの判定
+				}
+
+				scene = Start;//シーン移行
+			}
+			else if (gameoverSelect)
+			{
+				cameraPos = { 0.0f, 4.5f, 0.0f };//カメラの座標
+				domePos = { 0.0f, 0.0f, 0.0f };//天球の座標
+				domeRot = { 0.0f, 0.0f, 0.0f };//天球の回転量
+				pPos = { 0.0f, 2.0f, 3.0f };//プレイヤーの座標
+				pRot = { 0.0f, 0.0f, 0.0f };//プレイヤーの回転量
+				waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
+				pRail = 2.0f;//プレイヤーのいるレール(一番左から0)
+				moveTime = 0.0f;//移動時間をカウント
+				moveCount = 0.0f;//移動量をカウント
+				isMove = false;//移動中かどうか
+				moveDire = false;//移動の向き(false:左 true:右)
+				shotNum = 0.0f;//攻撃パターン
+				isShot = false;//攻撃中かどうか
+				isChange = false;//プレイヤーのパーツ変更中かどうか
+				enemySpawnTimer = 0.0f;//敵の出現までのカウント
+				enemySpawnInterval = 10.0f;//敵出現までの間隔
+				gameTime = 0.0f;//ゲーム経過時間
+				score = 0.0f;//進んだ距離
+				deadLinePos = -10.0f;//死亡ライン
+
+				//レーン
+				railPos[0] = { -8.0f, 2.0f, 0.0f };
+				railPos[1] = { -4.0f, 2.0f, 0.0f };
+				railPos[2] = { 0.0f, 2.0f, 0.0f };
+				railPos[3] = { 4.0f, 2.0f, 0.0f };
+				railPos[4] = { 8.0f, 2.0f, 0.0f };
+
+				partsNum = 0.0f;//装着中のパーツの種類
+				partsCD = 20.0f;//パーツのCT
+				partsHP = 0.0f;//パーツの耐久値
+
+				arrowPos = { 280.0f, 210.0f };//矢印の座標
+				arrowSprite->SetPosition(arrowPos);
+				timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
+				timeBarSprite->SetPosition(timeBarPos);
+
+				//クリア処理関連
+				clearSelectCount = 0.0f;//ロゴ点滅カウント
+				clearSelect = false;//選択肢の位置
+				clearSelectHide = false;//選択肢の表示
+
+				//ゲームオーバー処理関連
+				gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+				gameoverSelect = false;//選択肢の位置
+				gameoverSelectHide = false;//選択肢の表示
+
+				for (int i = 0; i < 100; i++)
+				{
+					e01Pos[i] = deadPos;//敵1の座標
+					e01Rot[i] = { 0.0f, 0.0f, 0.0f };//敵1の回転
+					e02Pos[i] = deadPos;//敵2の座標
+					e02Rot[i] = { 0.0f, 0.0f, 0.0f };//敵2の回転
+					e03Pos[i] = deadPos;//敵3の座標
+					e03Rot[i] = { 0.0f, 0.0f, 0.0f };//敵3の回転
+					e04Pos[i] = deadPos;//敵4の座標
+					e04Rot[i] = { 0.0f, 0.0f, 0.0f };//敵4の回転
+					pBullPos[i] = deadPos;//プレイヤーの弾の座標
+					eBullPos[i] = deadPos;//プレイヤーの弾の座標
+					parts01Pos[i] = deadPos;//パーツ1の座標
+					parts02Pos[i] = deadPos;//パーツ2の座標
+					parts03Pos[i] = deadPos;//パーツ3の座標
+					parts04Pos[i] = deadPos;//パーツ4の座標
+					pPartsPos[i] = deadPos;//プレイヤーのパーツの座標
+					pPartsRot[i] = { 0.0f, 0.0f, 0.0f };//プレイヤーのパーツの回転量
+					pBullAriveTime[i] = 0.0f;//弾が生きている時間
+					eBullAriveTime[i] = 0.0f;//弾が生きている時間
+					attackNum[i] = 0.0f;//弾の処理パターン
+					pBullArive[i] = false;//弾が生きているかの判定
+					eBullArive[i] = false;//弾が生きているかの判定
+					pPartsArive[i] = false;//プレイヤーのパーツが生きているかの判定
+					parts01Arive[i] = false;//パーツ1が生きているかの判定
+					parts02Arive[i] = false;//パーツ2が生きているかの判定
+					parts03Arive[i] = false;//パーツ3が生きているかの判定
+					parts04Arive[i] = false;//パーツ4が生きているかの判定
+					enemy01Arive[i] = false;//敵1が生きているかの判定
+					enemy02Arive[i] = false;//敵2が生きているかの判定
+					enemy03Arive[i] = false;//敵3が生きているかの判定
+					enemy04Arive[i] = false;//敵4が生きているかの判定
+				}
+
+				scene = Title;//シーン移行
 			}
 		}
 	}
@@ -1626,14 +2038,45 @@ void GameScene::Draw()
 	else if (scene == Select)
 	{
 		selectLogo->Draw();
-		stage1Logo->Draw();
-		stage2Logo->Draw();
-		stage3Logo->Draw();
+		if (selectHide)
+		{
+			if (selectNum != 1.0f)
+			{
+				stage1Logo->Draw();
+			}
+		}
+		else
+		{
+			stage1Logo->Draw();
+		}
+		if (selectHide)
+		{
+			if (selectNum != 2.0f)
+			{
+				stage2Logo->Draw();
+			}
+		}
+		else
+		{
+			stage2Logo->Draw();
+		}
+		if (selectHide)
+		{
+			if (selectNum != 3.0f)
+			{
+				stage3Logo->Draw();
+			}
+		}
+		else
+		{
+			stage3Logo->Draw();
+		}
+		
 		aLogo->Draw();
 		dLogo->Draw();
 		leftLogo->Draw();
 		rightLogo->Draw();
-		if (!selectHide) { arrowSprite->Draw(); }
+		arrowSprite->Draw();
 	}
 	else if (scene == Start || scene == Game || scene == Clear || scene == Gameover)
 	{
@@ -1651,6 +2094,62 @@ void GameScene::Draw()
 		//gameoverLogo->Draw();
 		//retryLogo->Draw();
 		//returnLogo->Draw();
+	}
+	else if (scene == ClearResult)
+	{
+		clearResultLogo->Draw();
+
+		if (!clearSelect)
+		{
+			if (!clearSelectHide)
+			{
+				nextLogo->Draw();
+			}
+		}
+		else
+		{
+			nextLogo->Draw();
+		}
+
+		if (clearSelect)
+		{
+			if (!clearSelectHide)
+			{
+				returnLogo->Draw();
+			}
+		}
+		else
+		{
+			returnLogo->Draw();
+		}
+	}
+	else if (scene == GameoverResult)
+	{
+		gameoverResultLogo->Draw();
+
+		if (!gameoverSelect)
+		{
+			if (!gameoverSelectHide)
+			{
+				retryLogo->Draw();
+			}
+		}
+		else
+		{
+			retryLogo->Draw();
+		}
+
+		if (gameoverSelect)
+		{
+			if (!gameoverSelectHide)
+			{
+				returnLogo->Draw();
+			}
+		}
+		else
+		{
+			returnLogo->Draw();
+		}
 	}
 
 	Sprite::PostDraw();//スプライト描画後処理

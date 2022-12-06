@@ -29,7 +29,7 @@ public://サブクラス
 	//ループ分岐用
 	enum Scene
 	{
-		Title, Select, Start, Game, End, Clear, Gameover
+		Title, Select, Start, Game, End, Clear, Gameover, ClearResult, GameoverResult
 	};
 
 private://静的メンバ変数
@@ -272,4 +272,16 @@ private://メンバ変数
 	float startMoveCount = 0.0f;//ロゴの移動カウント
 	float startMoveTime = 40.0f;//ロゴの移動時間
 	float startStopTime = 60.0f;//ロゴの停止時間
+
+	//クリア処理関連
+	float clearSelectCount = 0.0f;//ロゴ点滅カウント
+	float clearSelectInterval = 25.0f;//ロゴ点滅間隔
+	bool clearSelect = false;//選択肢の位置
+	bool clearSelectHide = false;//選択肢の表示
+
+	//ゲームオーバー処理関連
+	float gameoverSelectCount = 0.0f;//ロゴ点滅カウント
+	float gameoverSelectInterval = 25.0f;//ロゴ点滅間隔
+	bool gameoverSelect = false;//選択肢の位置
+	bool gameoverSelectHide = false;//選択肢の表示
 };
