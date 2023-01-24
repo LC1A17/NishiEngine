@@ -97,10 +97,7 @@ void Model::LoadModel(const std::string & modelname, bool smoothing)
 	//.objファイルを開く
 	file.open(directoryPath + filename);
 	//ファイルオープン失敗をチェック
-	if (file.fail())
-	{
-		assert(0);
-	}
+	if (file.fail()) { assert(0); }
 
 	name = modelname;
 
@@ -297,10 +294,7 @@ void Model::LoadModel(const std::string & modelname, bool smoothing)
 	file.close();
 
 	//頂点法線の平均によるエッジの平滑化
-	if (smoothing)
-	{
-		mesh->CalculateSmoothedVertexNormals();
-	}
+	if (smoothing) { mesh->CalculateSmoothedVertexNormals(); }
 }
 
 void Model::LoadMaterial(const std::string & directoryPath, const std::string & filename)
@@ -310,10 +304,7 @@ void Model::LoadMaterial(const std::string & directoryPath, const std::string & 
 	//マテリアルファイルを開く
 	file.open(directoryPath + filename);
 	//ファイルオープン失敗をチェック
-	if (file.fail())
-	{
-		assert(0);
-	}
+	if (file.fail()) { assert(0); }
 
 	Material* material = nullptr;
 
@@ -422,10 +413,7 @@ void Model::CreateDescriptorHeap()
 		descHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;//シェーダから見えるように
 		descHeapDesc.NumDescriptors = (UINT)count;//シェーダーリソースビューの数
 		result = device->CreateDescriptorHeap(&descHeapDesc, IID_PPV_ARGS(&descHeap));//生成
-		if (FAILED(result))
-		{
-			assert(0);
-		}
+		if (FAILED(result)) { assert(0); }
 	}
 
 	//デスクリプタサイズを取得

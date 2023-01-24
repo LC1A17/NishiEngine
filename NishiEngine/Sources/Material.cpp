@@ -42,10 +42,7 @@ void Material::CreateConstantBuffer()
 		D3D12_RESOURCE_STATE_GENERIC_READ,
 		nullptr,
 		IID_PPV_ARGS(&constBuff));
-	if (FAILED(result))
-	{
-		assert(0);
-	}	
+	if (FAILED(result)) { assert(0); }
 }
 
 void Material::LoadTexture(const std::string& directoryPath, CD3DX12_CPU_DESCRIPTOR_HANDLE cpuHandle, CD3DX12_GPU_DESCRIPTOR_HANDLE gpuHandle)
@@ -75,10 +72,7 @@ void Material::LoadTexture(const std::string& directoryPath, CD3DX12_CPU_DESCRIP
 	result = LoadFromWICFile(
 		wfilepath, WIC_FLAGS_NONE,
 		&metadata, scratchImg);
-	if (FAILED(result))
-	{
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	const Image* img = scratchImg.GetImage(0, 0, 0);//生データ抽出
 
@@ -99,10 +93,7 @@ void Material::LoadTexture(const std::string& directoryPath, CD3DX12_CPU_DESCRIP
 		D3D12_RESOURCE_STATE_GENERIC_READ,//テクスチャ用指定
 		nullptr,
 		IID_PPV_ARGS(&texbuff));
-	if (FAILED(result))
-	{
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	//テクスチャバッファにデータ転送
 	result = texbuff->WriteToSubresource(
@@ -112,10 +103,7 @@ void Material::LoadTexture(const std::string& directoryPath, CD3DX12_CPU_DESCRIP
 		(UINT)img->rowPitch,//1ラインサイズ
 		(UINT)img->slicePitch//1枚サイズ
 	);
-	if (FAILED(result))
-	{
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	//シェーダリソースビュー作成
 	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};//設定構造体

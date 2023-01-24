@@ -1,9 +1,6 @@
 ﻿#include "DebugText.h"
 
-DebugText::DebugText()
-{
-
-}
+DebugText::DebugText() {}
 
 DebugText::~DebugText()
 {
@@ -34,7 +31,6 @@ void DebugText::Print(const std::string & text, float x, float y, float scale = 
 {
 	SetPos(x, y);
 	SetSize(scale);
-
 	NPrint((int)text.size(), text.c_str());
 }
 
@@ -44,19 +40,14 @@ void DebugText::NPrint(int len, const char* text)
 	for (int i = 0; i < len; i++)
 	{
 		//最大文字数超過
-		if (spriteIndex >= maxCharCount)
-		{
-			break;
-		}
+		if (spriteIndex >= maxCharCount) { break; }
 
 		//1文字取り出す(※ASCIIコードでしか成り立たない)
 		const unsigned char& character = text[i];
 
 		int fontIndex = character - 32;
-		if (character >= 0x7f)
-		{
-			fontIndex = 0;
-		}
+
+		if (character >= 0x7f) { fontIndex = 0; }
 
 		int fontIndexY = fontIndex / fontLineCount;
 		int fontIndexX = fontIndex % fontLineCount;

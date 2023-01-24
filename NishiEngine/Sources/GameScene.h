@@ -29,7 +29,7 @@ public://サブクラス
 	//ループ分岐用
 	enum Scene
 	{
-		Title, Select, Start, Game, End, Clear, Gameover, ClearResult, GameoverResult
+		Title, StageSelect, Start, Game, End, Clear, Gameover, ClearResult, GameoverResult
 	};
 
 private://静的メンバ変数
@@ -48,6 +48,10 @@ public://メンバ関数
 	void Draw();
 	//パーティクル生成
 	void CreateParticles();
+	//ロゴ点滅処理
+	void logoFlash();
+	//シーン遷移処理
+	void sceneChange();
 
 private://メンバ変数
 	DirectXCommon* dxCommon = nullptr;
@@ -69,30 +73,27 @@ private://メンバ変数
 	float lightColor2[3] = { 0,0,1 };
 
 	//スプライト関連
-	Sprite* titleSprite = nullptr;//タイトル背景のスプライト
-	Sprite* gameSprite = nullptr;//ゲーム背景のスプライト
-	Sprite* resultSprite = nullptr;//リザルト背景のスプライト
-	Sprite* arrowSprite = nullptr;//矢印のスプライト
-	Sprite* selectLogo = nullptr;//ステージセレクトのロゴ
+	Sprite* backSprite = nullptr;//基礎背景
+	Sprite* titleLogo = nullptr;//ゲームタイトルロゴ
+	Sprite* spaceLogo = nullptr;//SPACEロゴ
+	Sprite* stageSelectLogo = nullptr;//STAGE SELECTロゴ
+	Sprite* aLogo = nullptr;//Aロゴ
+	Sprite* dLogo = nullptr;//Dロゴ
+	Sprite* leftArrowLogo = nullptr;//←ロゴ
+	Sprite* rightArrowLogo = nullptr;//→ロゴ
 	Sprite* stage1Logo = nullptr;//ステージ1のロゴ
 	Sprite* stage2Logo = nullptr;//ステージ2のロゴ
 	Sprite* stage3Logo = nullptr;//ステージ3のロゴ
-	Sprite* titleLogo = nullptr;//タイトルロゴ
-	Sprite* clearLogo = nullptr;//クリアロゴ
-	Sprite* gameoverLogo = nullptr;//ゲームオーバーロゴ
+	Sprite* startLogo = nullptr;//STARTロゴ
+	Sprite* timeGaugeSprite = nullptr;//進行ゲージ
+	Sprite* clockHandsSprite = nullptr;//進行度
+	Sprite* stageClearLogo = nullptr;//STAGE CLEARロゴ
+	Sprite* gameoverLogo = nullptr;//GAME OVERロゴ
 	Sprite* nextLogo = nullptr;//NEXTロゴ
 	Sprite* retryLogo = nullptr;//RETRYロゴ
 	Sprite* returnLogo = nullptr;//TITLEロゴ
-	Sprite* startLogo = nullptr;//Startロゴ
-	Sprite* aLogo = nullptr;//aロゴ
-	Sprite* dLogo = nullptr;//dロゴ
-	Sprite* leftLogo = nullptr;//←ロゴ
-	Sprite* rightLogo = nullptr;//→ロゴ
-	Sprite* spaceLogo = nullptr;//spaceロゴ
-	Sprite* lengthSprite = nullptr;//ステージのバー
-	Sprite* timeBarSprite = nullptr;//時間バー
-	Sprite* clearResultLogo = nullptr;//リザルト用クリアロゴ
-	Sprite* gameoverResultLogo = nullptr;//リザルト用ゲームオーバーロゴ
+	Sprite* blackBox = nullptr;//シーン遷移用黒背景
+	Sprite* moveAD = nullptr;//操作説明
 
 	//モデル関連
 	Model* domeModel = nullptr;//天球のモデル
@@ -164,14 +165,17 @@ private://メンバ変数
 	XMFLOAT3 pPartsPos[100];//プレイヤーのパーツの座標
 	XMFLOAT3 pPartsRot[100];//プレイヤーのパーツの回転量
 	XMFLOAT3 waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
-	XMFLOAT2 arrowPos = { 280.0f, 210.0f };//矢印の座標
-	XMFLOAT2 startPos = { 363.0f, -150.0f };//スタートロゴの座標
-	XMFLOAT2 timeBarPos = { 138.0f, 42.0f };//タイムバーの座標
-	XMFLOAT2 clearPos = { 40.0f, -150.0f };//クリアロゴの座標
-	XMFLOAT2 gameoverPos = { 153.0f, -150.0f };//ゲームオーバーロゴの座標
+
+	XMFLOAT2 startLogoPos = { 363.0f, -150.0f };//スタートロゴの座標
+	XMFLOAT2 clockHandsPos = { 138.0f, 42.0f };//タイムバーの座標
+	XMFLOAT2 stageClearLogoPos = { 40.0f, -150.0f };//クリアロゴの座標
+	XMFLOAT2 gameoverLogoPos = { 153.0f, -150.0f };//ゲームオーバーロゴの座標
+	XMFLOAT2 boxPosition = { -1280.0f, -720.0f };//シーン遷移背景
 
 	//シーン関連
 	int scene = Title;//ゲームシーン
+	bool isSceneChange = false;//シーン遷移用
+	float sceneChangeCount = 0.0f;//シーン遷移カウント
 
 	//プレイヤー移動関連
 	//初期化不要
@@ -248,40 +252,23 @@ private://メンバ変数
 	float eBullAriveTime[100];//弾が生きている時間
 	bool eBullArive[100];//弾が生きているかの判定
 
-	//タイトル関連
-	float spaceLogoCount = 0.0f;//ロゴ点滅カウント
-	float spaceLogoInterval = 25.0f;//ロゴ点滅間隔
-	bool spaceHide = false;//矢印の表示
+	//ロゴ点滅関連
+	float logoFlashCount = 0.0f;//ロゴ点滅カウント
+	float logoFlashInterval = 20.0f;//ロゴ点滅間隔
+	bool logoHid = false;//ロゴ 0:表示 1:非表示
+
+	//ロゴ移動処理関連
+	float logoMoveSpead = 10.0f;//ロゴの移動速度
+	float logoMoveCount = 0.0f;//ロゴの移動カウント
+	float logoMoveTime = 40.0f;//ロゴの最大移動時間
+	float logoStopTime = 60.0f;//ロゴの停止時間
+	bool logoMove = false;//ロゴ 0:移動中 1:停止中
+	bool logoMoveDirection = false;//ロゴ移動方向 0:下 1:上
 
 	//ステージセレクト関連
-	float selectNum = 1.0f;//選択中のステージ
-	float selectLogoCount = 0.0f;//ロゴ点滅カウント
-	float selectLogoInterval = 25.0f;//ロゴ点滅間隔
-	float arrowSpead = 10.0f;//矢印の移動速度
-	float arrowMoveCount = 0.0f;//矢印の移動カウント
-	float arrowMoveTime = 30.0f;//矢印の移動時間
-	bool selectMove = false;//選択中かどうか
-	bool selectHide = false;//矢印の表示
-	bool selectMoveDire = false;//移動方向
+	float selectStageNum = 1.0f;//選択中のステージ
+	float maxStageNum = 3.0f;//ステージの最大数
 
-	//スタート処理関連
-	bool startEnd = false;//スタート処理中か
-	bool startDire = false;//ロゴの移動方向
-	bool startStop = false;//スタートロゴが停止中か
-	float startSpead = 10.0f;//ロゴの移動速度
-	float startMoveCount = 0.0f;//ロゴの移動カウント
-	float startMoveTime = 40.0f;//ロゴの移動時間
-	float startStopTime = 60.0f;//ロゴの停止時間
-
-	//クリア処理関連
-	float clearSelectCount = 0.0f;//ロゴ点滅カウント
-	float clearSelectInterval = 25.0f;//ロゴ点滅間隔
-	bool clearSelect = false;//選択肢の位置
-	bool clearSelectHide = false;//選択肢の表示
-
-	//ゲームオーバー処理関連
-	float gameoverSelectCount = 0.0f;//ロゴ点滅カウント
-	float gameoverSelectInterval = 25.0f;//ロゴ点滅間隔
-	bool gameoverSelect = false;//選択肢の位置
-	bool gameoverSelectHide = false;//選択肢の表示
+	//リザルト関連
+	bool resultSelect = false;//選択肢の位置
 };

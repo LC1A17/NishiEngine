@@ -176,20 +176,14 @@ void Object3d::CreateGraphicsPipeline()
 	result = D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0, &rootSigBlob, &errorBlob);
 	//ルートシグネチャの生成
 	result = device->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(), IID_PPV_ARGS(&pipelineSet.rootsignature));
-	if (FAILED(result))
-	{
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 
 	gpipeline.pRootSignature = pipelineSet.rootsignature.Get();
 
 	//グラフィックスパイプラインの生成
 	result = device->CreateGraphicsPipelineState(&gpipeline, IID_PPV_ARGS(&pipelineSet.pipelinestate));
 
-	if (FAILED(result))
-	{
-		assert(0);
-	}
+	if (FAILED(result)) { assert(0); }
 }
 
 void Object3d::PreDraw(ID3D12GraphicsCommandList * cmdList)
@@ -214,10 +208,7 @@ Object3d * Object3d::Create(Model* model)
 {
 	//3Dオブジェクトのインスタンスを生成
 	Object3d* object3d = new Object3d();
-	if (object3d == nullptr)
-	{
-		return nullptr;
-	}
+	if (object3d == nullptr) { return nullptr; }
 
 	//初期化
 	if (!object3d->Initialize())
@@ -310,10 +301,7 @@ void Object3d::Draw()
 	assert(Object3d::cmdList);
 
 	//モデルの割り当てがなければ描画しない
-	if (model == nullptr)
-	{
-		return;
-	}
+	if (model == nullptr) { return; }
 
 	//パイプラインステートの設定
 	cmdList->SetPipelineState(pipelineSet.pipelinestate.Get());

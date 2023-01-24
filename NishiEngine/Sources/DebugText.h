@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include "Sprite.h"
 #include <Windows.h>
 #include <string>

@@ -317,10 +317,7 @@ Sprite * Sprite::Create(UINT texNumber, XMFLOAT2 position, XMFLOAT4 color, XMFLO
 
 	//Spriteのインスタンスを生成
 	Sprite* sprite = new Sprite(texNumber, position, size, color, anchorpoint, isFlipX, isFlipY);
-	if (sprite == nullptr)
-	{
-		return nullptr;
-	}	
+	if (sprite == nullptr) { return nullptr; }
 
 	//初期化
 	if (!sprite->Initialize())
