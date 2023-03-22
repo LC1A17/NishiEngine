@@ -216,7 +216,6 @@
     <ClCompile Include="Sources\DebugCamera.cpp" />
     <ClCompile Include="Sources\DebugText.cpp" />
     <ClCompile Include="Sources\DirectXCommon.cpp" />
-    <ClCompile Include="Sources\Easing.cpp" />
     <ClCompile Include="Sources\GameScene.cpp" />
     <ClCompile Include="Sources\Input.cpp" />
     <ClCompile Include="Sources\LightGroup.cpp" />
@@ -240,7 +239,6 @@
     <ClInclude Include="Sources\DebugText.h" />
     <ClInclude Include="Sources\DirectionalLight.h" />
     <ClInclude Include="Sources\DirectXCommon.h" />
-    <ClInclude Include="Sources\Easing.h" />
     <ClInclude Include="Sources\GameScene.h" />
     <ClInclude Include="Sources\Input.h" />
     <ClInclude Include="Sources\LightGroup.h" />

@@ -26,10 +26,10 @@ private://エイリアス
 	using XMMATRIX = DirectX::XMMATRIX;
 
 public://サブクラス
-	//ループ分岐用
+	//ゲームシーンパターン
 	enum Scene
 	{
-		Title, StageSelect, Start, Game, End, Clear, Gameover, ClearResult, GameoverResult
+		Title, StageSelect, StartLogo, Game, End, ClearLogo, GameoverLogo, ClearResult, GameoverResult
 	};
 
 private://静的メンバ変数
@@ -46,229 +46,315 @@ public://メンバ関数
 	void Update();
 	//描画
 	void Draw();
+	//変数の初期化処理
+	void InitializeVariable();
+	//スプライト読み込み、生成処理
+	void CreateSprite();
+	//スプライトの初期座標調整処理
+	void SettingSprite();
+	//パーティクル初期化処理
+	void InitializeParticleManager();
+	//3Dオブジェクト読み込み、生成処理
+	void CreateObject3d();
+	//3Dオブジェクトの初期座標、回転、スケール調整処理
+	void SettingObject3d();
+	//スプライトの描画処理
+	void DrawSprite();
+	//3Dオブジェクトの描画処理
+	void DrawObject3D();
+	//前景スプライトの描画処理
+	void DrawForegroundSprite();
 	//パーティクル生成
-	void CreateParticles();
+	//void CreateParticles();
+	//プレイヤー移動パーティクル生成
+	void CreatePlayerMoveParticles();
+	//プレイヤー被弾パーティクル生成
+	void CreatePlayerHitParticles();
+	//プレイヤー着地パーティクル生成
+	void CreatePlayerLandingParticles();
+	//レーザーパーティクル生成
+	void CreateLaserParticles();
+	//警告演出パーティクル生成
+	void CreateDangerParticles();
+	//各種パーティクル生成処理
+	void ControlParticles();
+	//シーン遷移開始前処理(int 遷移後のシーン)
+	void SceneChangeStart(int selectScene);
+	//シーン遷移処理(int 遷移後のシーン)
+	void SceneChange(int selectScene);
 	//ロゴ点滅処理
-	void logoFlash();
-	//シーン遷移処理
-	void sceneChange();
+	void LogoFlash();
+	//選択肢処理(float 増加量, bool 現在のシーン 0:ステージセレクト 1:リザルト)
+	void ChoiceMove(float increase, bool nowScene);
+	//ロゴ上下移動処理(int 遷移後のシーン)
+	void LogoUpAndDown(int selectScene);
+	//オブジェクトの移動、回転処理
+	void ObjectMoveAndRotation();
+	//プレイヤー左右レール移動開始処理(bool 移動方向 左:true 右:false)
+	void PlayerMoveStart(bool direction);
+	//プレイヤー左右レール移動処理
+	void PlayerMove();
+	//スコア加算処理
+	void ScoreCharge();
+	//スコアボードの表示用計算
+	void CalculationScoreBoard();
+	//ステージ生成処理
+	void StageManager();
+	//障害物、アイテム、マップ攻撃を生成(1～10:障害物 10～20:アイテム 21～30:マップ攻撃)
+	void SpawnManager(float posX, float objectNum);
+	//プレイヤーとオブジェクトの当たり判定
+	void PlayerCollision();
+	//スコアボードの描画
+	void DrawScoreBoard(bool isResult);
 
 private://メンバ変数
-	DirectXCommon* dxCommon = nullptr;
-	Input* input = nullptr;
-	Audio* audio = nullptr;
-	DebugText* debugText;	
-
-	//ゲームシーン用
-	DebugCamera* camera = nullptr;
-	ParticleManager* particleMan = nullptr;
+	DirectXCommon* dxCommon	 = nullptr;
+	Input* input			 = nullptr;
+	Audio* audio			 = nullptr;
+	DebugCamera* camera		 = nullptr;
+	DebugText* debugText;
 
 	LightGroup* lightGroup = nullptr;
-	float ambientColor0[3] = { 1,1,1 };
-	float lightDir0[3] = { 0,0,1 };
-	float lightColor0[3] = { 1,0,0 };
-	float lightDir1[3] = { 0,1,0 };
-	float lightColor1[3] = { 0,1,0 };
-	float lightDir2[3] = { 1,0,0 };
-	float lightColor2[3] = { 0,0,1 };
+	float ambientColor0[3] = { 1, 1, 1 };
+	float lightDir0[3]	   = { 0, 0, 1 };
+	float lightColor0[3]   = { 1, 0, 0 };
+	float lightDir1[3]     = { 0, 1, 0 };
+	float lightColor1[3]   = { 0, 1, 0 };
+	float lightDir2[3]     = { 1, 0, 0 };
+	float lightColor2[3]   = { 0, 0, 1 };
 
 	//スプライト関連
-	Sprite* backSprite = nullptr;//基礎背景
-	Sprite* titleLogo = nullptr;//ゲームタイトルロゴ
-	Sprite* spaceLogo = nullptr;//SPACEロゴ
-	Sprite* stageSelectLogo = nullptr;//STAGE SELECTロゴ
-	Sprite* aLogo = nullptr;//Aロゴ
-	Sprite* dLogo = nullptr;//Dロゴ
-	Sprite* leftArrowLogo = nullptr;//←ロゴ
-	Sprite* rightArrowLogo = nullptr;//→ロゴ
-	Sprite* stage1Logo = nullptr;//ステージ1のロゴ
-	Sprite* stage2Logo = nullptr;//ステージ2のロゴ
-	Sprite* stage3Logo = nullptr;//ステージ3のロゴ
-	Sprite* startLogo = nullptr;//STARTロゴ
-	Sprite* timeGaugeSprite = nullptr;//進行ゲージ
-	Sprite* clockHandsSprite = nullptr;//進行度
-	Sprite* stageClearLogo = nullptr;//STAGE CLEARロゴ
-	Sprite* gameoverLogo = nullptr;//GAME OVERロゴ
-	Sprite* nextLogo = nullptr;//NEXTロゴ
-	Sprite* retryLogo = nullptr;//RETRYロゴ
-	Sprite* returnLogo = nullptr;//TITLEロゴ
-	Sprite* blackBox = nullptr;//シーン遷移用黒背景
-	Sprite* moveAD = nullptr;//操作説明
+	Sprite* titleBack		 = nullptr;//タイトル、リザルトの背景
+	Sprite* gameTitleLogo	 = nullptr;//ゲームタイトルのロゴ
+	Sprite* spaceLogo		 = nullptr;//PRESS SPACEのロゴ
+	Sprite* stageSelectLogo  = nullptr;//STAGE SELECTのロゴ
+	Sprite* aLogo			 = nullptr;//Aのロゴ
+	Sprite* dLogo			 = nullptr;//Dのロゴ
+	Sprite* leftArrowLogo	 = nullptr;//←のロゴ
+	Sprite* rightArrowLogo	 = nullptr;//→のロゴ
+	Sprite* stage1Logo		 = nullptr;//STAGE1のロゴ
+	Sprite* stage2Logo		 = nullptr;//STAGE2のロゴ
+	Sprite* stage3Logo		 = nullptr;//STAGE3のロゴ
+	Sprite* startLogo		 = nullptr;//STARTのロゴ
+	Sprite* distanceUI		 = nullptr;//進行度ゲージ本体
+	Sprite* distanceBarUI	 = nullptr;//進行度ゲージの赤バー
+	Sprite* stageClearLogo	 = nullptr;//STAGE CLEARのロゴ
+	Sprite* gameoverLogo	 = nullptr;//GAME OVERのロゴ
+	Sprite* nextLogo		 = nullptr;//NEXTのロゴ
+	Sprite* retryLogo		 = nullptr;//RETRYのロゴ
+	Sprite* titleLogo		 = nullptr;//TITLEのロゴ
+	Sprite* blackBack		 = nullptr;//シーン遷移用黒背景
+	Sprite* moveAD			 = nullptr;//操作説明のUI
+	Sprite* distanceStartUI  = nullptr;//進行度ゲージのSTARTのロゴ
+	Sprite* distanceGoalUI	 = nullptr;//進行度ゲージのGOALのロゴ
+	Sprite* gameBack		 = nullptr;//ゲーム中の背景
+	Sprite* dangerUI		 = nullptr;//警告演出の！マークのUI
+	Sprite* scoreBoard		 = nullptr;//スコアボード
+	Sprite* resultScoreBoard = nullptr;//リザルトのスコアボード
+
+	Sprite* scoreNumber0[5];//スコア表示用の0
+	Sprite* scoreNumber1[5];//スコア表示用の1
+	Sprite* scoreNumber2[5];//スコア表示用の2
+	Sprite* scoreNumber3[5];//スコア表示用の3
+	Sprite* scoreNumber4[5];//スコア表示用の4
+	Sprite* scoreNumber5[5];//スコア表示用の5
+	Sprite* scoreNumber6[5];//スコア表示用の6
+	Sprite* scoreNumber7[5];//スコア表示用の7
+	Sprite* scoreNumber8[5];//スコア表示用の8
+	Sprite* scoreNumber9[5];//スコア表示用の9
+
+	Sprite* resultScoreNumber0[5];//リザルトのスコア表示用の0
+	Sprite* resultScoreNumber1[5];//リザルトのスコア表示用の1
+	Sprite* resultScoreNumber2[5];//リザルトのスコア表示用の2
+	Sprite* resultScoreNumber3[5];//リザルトのスコア表示用の3
+	Sprite* resultScoreNumber4[5];//リザルトのスコア表示用の4
+	Sprite* resultScoreNumber5[5];//リザルトのスコア表示用の5
+	Sprite* resultScoreNumber6[5];//リザルトのスコア表示用の6
+	Sprite* resultScoreNumber7[5];//リザルトのスコア表示用の7
+	Sprite* resultScoreNumber8[5];//リザルトのスコア表示用の8
+	Sprite* resultScoreNumber9[5];//リザルトのスコア表示用の9
+
+	//パーティクル関連
+	ParticleManager* playerMoveParticle		 = nullptr;//プレイヤー移動パーティクル
+	ParticleManager* playerHitParticle		 = nullptr;//プレイヤー被弾パーティクル
+	ParticleManager* playerLandingParticle	 = nullptr;//プレイヤー着地パーティクル
+	ParticleManager* laserParticle			 = nullptr;//レーザーパーティクル
+	ParticleManager* dangerParticle			 = nullptr;//警告演出パーティクル
 
 	//モデル関連
-	Model* domeModel = nullptr;//天球のモデル
-	Model* railModel = nullptr;//レールのモデル
-	Model* playerModel = nullptr;//プレイヤーのモデル
-	Model* enemy01Model = nullptr;//敵1のモデル
-	Model* enemy02Model = nullptr;//敵2のモデル
-	Model* enemy03Model = nullptr;//敵3のモデル
-	Model* enemy04Model = nullptr;//敵4のモデル
-	Model* pBullModel = nullptr;//プレイヤーの弾のモデル
-	Model* eBullModel = nullptr;//敵の弾のモデル
-	Model* parts1Model = nullptr;//落ちているパーツ1のモデル
-	Model* parts2Model = nullptr;//落ちているパーツ2のモデル
-	Model* parts3Model = nullptr;//落ちているパーツ3のモデル
-	Model* parts4Model = nullptr;//落ちているパーツ4のモデル
-	Model* playerPartsModel = nullptr;//プレイヤーのパーツのモデル
-	Model* waterModel = nullptr;//水のモデル
+	Model* skydomeModel				 = nullptr;//天球
+	Model* railModel				 = nullptr;//レール
+	Model* playerModel				 = nullptr;//プレイヤー
+	Model* block1Model				 = nullptr;//障害物1
+	Model* block2Model				 = nullptr;//障害物2
+	Model* block3Model				 = nullptr;//障害物3
+	Model* item1Model				 = nullptr;//アイテム1
+	Model* item2Model				 = nullptr;//アイテム2
+	Model* item3Model				 = nullptr;//アイテム3
+	Model* playerBarrierPartsModel	 = nullptr;//プレイヤーバリアパーツ
+	Model* playerLandingPartsModel	 = nullptr;//プレイヤー着地衝撃波パーツ
+	Model* waterModel				 = nullptr;//水面
 
-	//オブジェクト関連
-	Object3d* dome = nullptr;//天球のオブジェクト
-	Object3d* rail[5];//レールのオブジェクト
-	Object3d* player = nullptr;//プレイヤーのオブジェクト
-	Object3d* enemy01[100];//敵1のオブジェクト
-	Object3d* enemy02[100];//敵2のオブジェクト
-	Object3d* enemy03[100];//敵3のオブジェクト
-	Object3d* enemy04[100];//敵4のオブジェクト
-	Object3d* pBull[100];//プレイヤーの弾のオブジェクト
-	Object3d* eBull[100];//敵の弾のオブジェクト
-	Object3d* parts01[100];//落ちているパーツ1のオブジェクト
-	Object3d* parts02[100];//落ちているパーツ2のオブジェクト
-	Object3d* parts03[100];//落ちているパーツ3のオブジェクト
-	Object3d* parts04[100];//落ちているパーツ4のオブジェクト
-	Object3d* playerParts[100];//プレイヤーのパーツのオブジェクト
-	WaterObject* waterPlane = nullptr;//水のオブジェクト
+	//3Dオブジェクト関連
+	Object3d* rail[5];//レール
+	Object3d* block1[100];//障害物1
+	Object3d* block2[100];//障害物2
+	Object3d* block3[100];//障害物3	
+	Object3d* item1[100];//アイテム1
+	Object3d* item2[100];//アイテム2
+	Object3d* item3[100];//アイテム3
+	Object3d* skydome			 = nullptr;//天球
+	Object3d* player			 = nullptr;//プレイヤー
+	Object3d* playerBarrierParts = nullptr;//プレイヤーバリアパーツ
+	Object3d* playerLandingParts = nullptr;//プレイヤー着地衝撃波パーツ
+	WaterObject* waterPlane		 = nullptr;//水面
+
+	//スプライト座標関連
+	XMFLOAT2 startLogoPosition		 = {   363.0f,  -150.0f };//STARTのロゴの座標
+	XMFLOAT2 distanceBarPosition	 = {   138.0f,    42.0f };//タイムバーの座標
+	XMFLOAT2 stageClearLogoPosition	 = {    40.0f,  -150.0f };//STAGE CLEARのロゴの座標
+	XMFLOAT2 gameoverLogoPosition	 = {   153.0f,  -150.0f };//GAME OVERのロゴの座標
+	XMFLOAT2 blackBackPosition		 = { -1536.0f,  -864.0f };//シーン遷移用黒背景の座標
 
 	//オブジェクト座標関連
-	//初期化不要
-	XMFLOAT3 domeSca = { 3.0f, 3.0f, 3.0f };//天球のサイズ
-	XMFLOAT3 railSca[5];//レールのサイズ
-	XMFLOAT3 pSca = { 1.0f, 1.0f, 1.0f };//プレイヤーのサイズ
-	XMFLOAT3 pOldPos = { 0.0f, 0.0f, 0.0f };//プレイヤーの移動前の座標
-	XMFLOAT3 eSca[100];//敵のサイズ
-	XMFLOAT3 partsSca[100];//パーツのサイズ
-	XMFLOAT3 pPartsOldPos[100];//プレイヤーのパーツの移動前の座標
-	XMFLOAT3 deadPos = { 1000.0f, 1000.0f, 1000.0f };//画面外の座標
-	XMFLOAT3 waterSca = { 50.0f, 1.0f, 50.0f };//水のサイズ
+	XMFLOAT3 initializeCoordinate		= {     0.0f,     0.0f,     0.0f };//初期位置
+	XMFLOAT3 offScreenPosition			= {  1000.0f,  1000.0f,  1000.0f };//画面外の座標
+	XMFLOAT3 skydomePosition			= {     0.0f,     0.0f,     0.0f };//天球の座標
+	XMFLOAT3 cameraPosition				= {     0.0f,     4.5f,     0.0f };//カメラの座標
+	XMFLOAT3 skydomeScale				= {     3.0f,     3.0f,     3.0f };//天球のスケール
+	XMFLOAT3 oldPlayerPosition			= {     0.0f,     0.0f,     0.0f };//移動前のプレイヤーの座標
+	XMFLOAT3 playerPosition				= {     0.0f,     2.0f,     3.0f };//プレイヤーの座標
+	XMFLOAT3 playerRotation				= {     0.0f,     0.0f,     0.0f };//プレイヤーの回転
+	XMFLOAT3 playerScale				= {     1.0f,     1.0f,     1.0f };//プレイヤーのスケール
+	XMFLOAT3 playerPartsScale			= {     0.0f,     0.0f,     0.0f };//プレイヤーパーツのスケール
+	XMFLOAT3 playerBarrierPartsPosition = {  1000.0f,  1000.0f,  1000.0f };//プレイヤーバリアパーツの座標
+	XMFLOAT3 waterPosition				= {     0.0f,     0.0f,     0.0f };//水面の座標
+	XMFLOAT3 waterScale					= {    50.0f,     1.0f,    50.0f };//水面のスケール
+	XMFLOAT3 railPosition[5];//レールの座標
+	XMFLOAT3 railScale[5];//レールのスケール
+	XMFLOAT3 block1Position[100];//障害物1の座標
+	XMFLOAT3 block1Rotation[100];//障害物1の回転
+	XMFLOAT3 block1Scale[100];//障害物1のスケール
+	XMFLOAT3 block2Position[100];//障害物2の座標
+	XMFLOAT3 block2Rotation[100];//障害物2の回転
+	XMFLOAT3 block2Scale[100];//障害物2のスケール
+	XMFLOAT3 block3Position[100];//障害物3の座標
+	XMFLOAT3 block3Rotation[100];//障害物3の回転
+	XMFLOAT3 block3Scale[100];//障害物3のスケール
+	XMFLOAT3 item1Position[100];//アイテム1の座標
+	XMFLOAT3 item1Rotation[100];//アイテム1の回転
+	XMFLOAT3 item1Scale[100];//アイテム1のスケール
+	XMFLOAT3 item2Position[100];//アイテム2の座標
+	XMFLOAT3 item2Rotation[100];//アイテム2の回転
+	XMFLOAT3 item2Scale[100];//アイテム2のスケール
+	XMFLOAT3 item3Position[100];//アイテム3の座標
+	XMFLOAT3 item3Rotation[100];//アイテム3の回転
+	XMFLOAT3 item3Scale[100];//アイテム3のスケール
+	XMFLOAT3 laserStartPosition[5];//レーザー開始座標
+	XMFLOAT3 laserLengthPosition[5];//レーザーの長さ測定用座標
 
-	//初期化必要
-	XMFLOAT3 cameraPos = { 0.0f, 4.5f, 0.0f };//カメラの座標
-	XMFLOAT3 domePos = { 0.0f, 0.0f, 0.0f };//天球の座標
-	XMFLOAT3 domeRot = { 0.0f, 0.0f, 0.0f };//天球の回転量
-	XMFLOAT3 railPos[5];//レールの座標
-	XMFLOAT3 pPos = { 0.0f, 2.0f, 3.0f };//プレイヤーの座標
-	XMFLOAT3 pRot = { 0.0f, 0.0f, 0.0f };//プレイヤーの回転量
-	XMFLOAT3 e01Pos[100];//敵1の座標
-	XMFLOAT3 e01Rot[100];//敵1の回転
-	XMFLOAT3 e02Pos[100];//敵2の座標
-	XMFLOAT3 e02Rot[100];//敵2の回転
-	XMFLOAT3 e03Pos[100];//敵3の座標
-	XMFLOAT3 e03Rot[100];//敵3の回転
-	XMFLOAT3 e04Pos[100];//敵4の座標
-	XMFLOAT3 e04Rot[100];//敵4の回転
-	XMFLOAT3 pBullPos[100];//プレイヤーの弾の座標
-	XMFLOAT3 eBullPos[100];//敵の弾の座標
-	XMFLOAT3 parts01Pos[100];//パーツ1の座標
-	XMFLOAT3 parts02Pos[100];//パーツ2の座標
-	XMFLOAT3 parts03Pos[100];//パーツ1の座標
-	XMFLOAT3 parts04Pos[100];//パーツ2の座標
-	XMFLOAT3 pPartsPos[100];//プレイヤーのパーツの座標
-	XMFLOAT3 pPartsRot[100];//プレイヤーのパーツの回転量
-	XMFLOAT3 waterPos = { 0.0f, 0.0f, 0.0f };//水の座標
-
-	XMFLOAT2 startLogoPos = { 363.0f, -150.0f };//スタートロゴの座標
-	XMFLOAT2 clockHandsPos = { 138.0f, 42.0f };//タイムバーの座標
-	XMFLOAT2 stageClearLogoPos = { 40.0f, -150.0f };//クリアロゴの座標
-	XMFLOAT2 gameoverLogoPos = { 153.0f, -150.0f };//ゲームオーバーロゴの座標
-	XMFLOAT2 boxPosition = { -1280.0f, -720.0f };//シーン遷移背景
+	//パーティクル座標関連
+	XMFLOAT3 playerHitParticlesPosition		 = {     0.0f,     0.0f,     0.0f };//プレイヤー被弾パーティクル生成座標
+	XMFLOAT3 playerLandingParticlesPosition	 = {     0.0f,     0.0f,     0.0f };//プレイヤー着地パーティクル生成座標
+	XMFLOAT3 laserParticlesPosition			 = {     0.0f,     2.0f,     0.0f };//レーザーパーティクル生成座標
+	XMFLOAT3 dangerParticlesPosition		 = {	 0.0f,     2.0f,     0.0f };//警告演出パーティクル生成座標
+	
+	//初期化関連
+	bool firstInitialize = false;//初回起動時かの判定
 
 	//シーン関連
-	int scene = Title;//ゲームシーン
-	bool isSceneChange = false;//シーン遷移用
-	float sceneChangeCount = 0.0f;//シーン遷移カウント
+	int scene = Title;//現在のシーン
+	int nextScene = Title;//遷移後のシーン
+	bool sceneChange = false;//シーン遷移中かの判定
+	float sceneChangeCount = 0.0f;//シーン遷移開始からの経過時間
+	float sceneChangeFinish = 90.0f;//シーン遷移の終了時間
 
-	//プレイヤー移動関連
-	//初期化不要
-	float moveTimeSpead = 0.0125f;//移動時間
-	float moveCountSpead = 0.2f;//移動量
-	float movePRot = 36.0f;//移動中のプレイヤーの回転量
-	float movePosZ = 0.3f;//自動で前に進む速度
-	float moveFinish = 3.9f;//移動終了の値
-	float gravity = 9.8f;//重力
-
-	//初期化必要
-	float pRail = 2.0f;//プレイヤーのいるレール(一番左から0)
-	float moveTime = 0.0f;//移動時間をカウント
-	float moveCount = 0.0f;//移動量をカウント
-	bool isMove = false;//移動中かどうか
-	bool moveDire = false;//移動の向き(false:左 true:右)
-
-	//プレイヤー射撃関連
-	//初期化不要
-	float pBullSpead[5];//弾の速度
-	float partsInitCD[5];//パーツのCDの最大値
-	float partsInitHP[5];//パーツの耐久値の最大値
-	float partsInitTime[5];//弾の生存時間の最大値
-	float partsRecovery[5];//パーツの耐久値回復量
-
-	//初期化必要
-	float shotNum = 0.0f;//攻撃パターン
-	float partsNum = 0.0f;//装着中のパーツの種類
-	float partsCD = 20.0f;//パーツのCD
-	float partsHP = 0.0f;//パーツの耐久値
-	float pBullAriveTime[100];//弾が生きている時間
-	float attackNum[100];//弾の処理パターン
-	bool isShot = false;//攻撃中かどうか
-	bool isChange = false;//プレイヤーのパーツ変更中かどうか
-	bool pBullArive[100];//弾が生きているかの判定
-	bool pPartsArive[100];//プレイヤーのパーツが生きているかの判定
-	bool parts01Arive[100];//パーツ1が生きているかの判定
-	bool parts02Arive[100];//パーツ2が生きているかの判定
-	bool parts03Arive[100];//パーツ3が生きているかの判定
-	bool parts04Arive[100];//パーツ4が生きているかの判定
-
-	//敵関連
-	//初期化不要
-	float enemyPosY = 2.0f;//基本となるY座標
-	float enemyPosZ = 50.0f;//基本となるZ座標
-	float moveEPosZ = -0.3f;//自動で前に進む速度
-	float deadLinePos = -10.0f;//画面買いに消えるタイミング
-
-	//初期化必要
-	float enemySpawnTimer = 0.0f;//敵の出現までのカウント
-	float enemySpawnInterval = 10.0f;//敵出現までの間隔
-	bool enemy01Arive[100];//敵1が生きているかの判定
-	bool enemy02Arive[100];//敵2が生きているかの判定
-	bool enemy03Arive[100];//敵3が生きているかの判定
-	bool enemy04Arive[100];//敵4が生きているかの判定
-
-	//システム関連
-	//初期化不要
-	float domeRotSpead = 0.05f;//天球の回転速度
-	float waterPosSpead = 0.1f;//水の流れる速度
-	float partsRotSpead = 15.0f;//パーツの回転速度
-	float gameTimeLimit = 3600.0f;//ゲーム終了時間
-	float timeBarLength = 3.0f;//時間バー計算用
-
-	//初期化必要
-	float gameTime = 0.0f;//ゲーム経過時間
-	float score = 0.0f;//進んだ距離
-
-	//敵射撃関連
-	//初期化不要
-	float eBullSpead[1];//弾の速度
-
-	//初期化必要
-	float eBullAriveTime[100];//弾が生きている時間
-	bool eBullArive[100];//弾が生きているかの判定
-
-	//ロゴ点滅関連
-	float logoFlashCount = 0.0f;//ロゴ点滅カウント
-	float logoFlashInterval = 20.0f;//ロゴ点滅間隔
-	bool logoHid = false;//ロゴ 0:表示 1:非表示
-
-	//ロゴ移動処理関連
-	float logoMoveSpead = 10.0f;//ロゴの移動速度
-	float logoMoveCount = 0.0f;//ロゴの移動カウント
-	float logoMoveTime = 40.0f;//ロゴの最大移動時間
-	float logoStopTime = 60.0f;//ロゴの停止時間
-	bool logoMove = false;//ロゴ 0:移動中 1:停止中
+	//ロゴ関連
+	float logoFlashCount = 0.0f;//ロゴ点滅からの経過時間
+	float logoFlashInterval = 20.0f;//ロゴ点滅の間隔
+	bool logoHide = true;//ロゴ false:非表示 1:表示
+	float logoMoveSpeed = 10.0f;//ロゴの移動速度
+	float logoMoveCount = 0.0f;//ロゴ移動開始からの経過時間
+	float logoMoveLimit = 40.0f;//ロゴの移動時間
+	float logoStopLimit = 60.0f;//ロゴの停止時間
+	bool logoMove = true;//ロゴ 0:停止中 1:移動中
 	bool logoMoveDirection = false;//ロゴ移動方向 0:下 1:上
 
 	//ステージセレクト関連
-	float selectStageNum = 1.0f;//選択中のステージ
-	float maxStageNum = 3.0f;//ステージの最大数
+	float selectStageNumber = 1.0f;//選択中のステージ
+	float maxStageNumber = 3.0f;//ステージの最大数
 
 	//リザルト関連
-	bool resultSelect = false;//選択肢の位置
+	float resultSelect = 0.0f;//リザルトの選択肢の位置
+	float maxResultSelectNumber = 1.0f;//リザルトの選択肢最大数
+
+	//スコア関連
+	int preScore = 0;//加算前のスコア
+	int postScore = 0;//加算後のスコア
+	int scoreBoard0 = 0;//スコアボード[0]0000
+	int scoreBoard1 = 0;//スコアボード0[0]000
+	int scoreBoard2 = 0;//スコアボード00[0]00
+	int scoreBoard3 = 0;//スコアボード000[0]0
+	int scoreBoard4 = 0;//スコアボード0000[0]
+
+	//システム関連
+	float gameTime = 0.0f;//ゲーム開始からの経過時間
+	float gameTimeLimit = 900.0f;//ゲーム終了時間
+	float skydomeRotationSpeed = 0.05f;//天球の回転速度
+	float waterPositionSpeed = -0.1f;//水の流れる速度
+	float autoMoveSpeedZ = 0.6f;//オブジェクトが自動で前or後に進む速度
+	float deadLinePosition = -10.0f;//オブジェクトが自然消滅するライン
+
+	//プレイヤー関連
+	bool sideJump = false;//移動中かどうか
+	bool sideJumpDirection = false;//移動の向き(false:左 true:右)
+	float sideJumpTimeSpeed = 0.0125f;//移動時間の増加スピード
+	float sideJumpTime = 0.0f;//移動時間
+	float sideJumpCountSpeed = 0.2f;//移動量の増加スピード
+	float sideJumpCount = 0.0f;//移動量
+	float sideJumpPlayerRotation = 36.0f;//移動中のプレイヤーの回転量
+	float sideJumpFinishTime = 3.9f;//移動終了の値
+	float gravity = 9.8f;//重力
+	float playerRailPosition = 2.0f;//プレイヤーのいるレール(一番左から0)
+	float equipItem = 0.0f;//装着中のパーツの種類
+
+	//障害物関連
+	float autoMoveBlockSpeedZ = -0.6f;//障害物で前に進む速度
+	float defaultBlockPositionY = 2.0f;//基本となるY座標
+	float defaultBlockPositionZ = 50.0f;//基本となるZ座標
+	bool block1Arive[100];//障害物1が生きているかの判定
+	bool block2Arive[100];//障害物2が生きているかの判定
+	bool block3Arive[100];//障害物3が生きているかの判定
+
+	//アイテム関連
+	bool item1Arive[100];//アイテム1が生きているかの判定
+	bool item2Arive[100];//アイテム2が生きているかの判定
+	bool item3Arive[100];//アイテム3が生きているかの判定
+
+	//警告演出関連
+	bool dangerUIArive = false;//警告演出が出現しているかの判定
+	float dangerUICount = 0.0f;//警告演出が出現してからの経過時間
+	float dangerUILimit = 60.0f;//警告演出の出現時間
+
+	//レーザー当たり判定関連
+	bool laserCollision[5];//レーザーが出現しているかの判定
+	float laserCollisionCount[5];//レーザーの判定が出現してからの経過時間
+	float laserCollisionLimit[5];//レーザーの判定の出現時間
+
+	//パーティクル関連
+	bool isPlayerHitParticles = false;//プレイヤー被弾エフェクト生成中かの判定
+	float isPlayerHitParticlesCount = 0.0f;//プレイヤー被弾エフェクト生成開始からの経過時間
+	float isPlayerHitParticlesLimit = 10.0f;//プレイヤー被弾エフェクトの生成時間
+
+	bool isPlayerLandingParticles = false;//プレイヤー着地エフェクト生成中かの判定
+	float isPlayerLandingParticlesCount = 0.0f;//プレイヤー着地エフェクト生成開始からの経過時間
+	float isPlayerLandingParticlesLimit = 10.0f;//プレイヤー着地エフェクトの生成時間
+
+	bool isLaserParticles = false;//レーザーパーティクル生成中かの判定
+	float isLaserParticlesCount = 0.0f;//レーザーエフェクト生成開始からの経過時間
+	float isLaserParticlesLimit = 20.0f;//レーザーエフェクトの生成時間
+
+	bool isDangerParticles = false;//警告演出パーティクル生成中かの判定
+	float isDangerParticlesCount = 0.0f;//警告演出エフェクト生成開始からの経過時間
+	float isDangerParticlesLimit = 20.0f;//警告演出エフェクトの生成時間
 };

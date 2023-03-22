@@ -24,6 +24,7 @@ public://サブクラス
 	{
 		XMFLOAT3 pos;//XYZ座標
 		float scale;//スケール
+		XMFLOAT4 color; // 色(RGBA)
 	};
 	//定数バッファ用データ構造体
 	struct ConstBufferData
@@ -50,17 +51,17 @@ public://サブクラス
 		//加速度
 		XMFLOAT3 accel = {};
 		//色
-		XMFLOAT3 color = {};
+		XMFLOAT4 color = {};
 		//スケール
 		float scale = 1.0f;
 		//回転
 		float rotation = 0.0f;
 		//初期値
-		XMFLOAT3 s_color = {};
+		XMFLOAT4 s_color = {};
 		float s_scale = 1.0f;
 		float s_rotation = 0.0f;
 		//最終値
-		XMFLOAT3 e_color = {};
+		XMFLOAT4 e_color = {};
 		float e_scale = 0.0f;
 		float e_rotation = 0.0f;
 		//現在フレーム
@@ -85,7 +86,7 @@ public://メンバ関数
 	//カメラのセット
 	inline void SetCamera(Camera* camera) { this->camera = camera; }
 	//パーティクルの追加
-	void Add(int life, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 accel, float start_scale, float end_scale );
+	void Add(int life, XMFLOAT3 position, XMFLOAT3 velocity, XMFLOAT3 accel, float start_scale, float end_scale, XMFLOAT4 s_color, XMFLOAT4 e_color);
 	//デスクリプタヒープの初期化
 	void InitializeDescriptorHeap();
 	//グラフィックパイプライン生成
