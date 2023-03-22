@@ -335,7 +335,7 @@ void GameScene::InitializeVariable()
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			laserCollisionLimit[i] = 90.0f;//レーザーの判定の出現時間
+			laserCollisionLimit[i] = 70.0f;//レーザーの判定の出現時間
 			railPosition[i] = { -8.0f + (4.0f * i), 2.0f, 0.0f };//レールの座標設定
 			railScale[i] = { 0.1f, 0.1f, 10000.0f };//レールのスケール設定
 		}
@@ -1519,7 +1519,7 @@ void GameScene::ObjectMoveAndRotation()
 			if (laserCollision[i])
 			{
 				laserCollisionCount[i] += 1.0f;//生成からの経過時間増加
-				laserLengthPosition[i].z -= 1.0f;//レーザーの長さ増加
+				laserLengthPosition[i].z -= 3.0f;//レーザーの長さ増加
 
 				//一定時間判定が出たら消滅
 				if (laserCollisionCount[i] >= laserCollisionLimit[i])
@@ -1996,10 +1996,10 @@ void GameScene::SpawnManager(float posX, float objectNum)
 		{
 			dangerParticlesPosition.x = posX;//X座標を設定
 			dangerParticlesPosition.y = 2.0f;//Y座標を設定
-			dangerParticlesPosition.z = playerPosition.z + 100.0f;//Z座標を設定
+			dangerParticlesPosition.z = playerPosition.z + 150.0f;//Z座標を設定
 			laserParticlesPosition.x = posX;//X座標を設定
 			laserParticlesPosition.y = 2.0f;//Y座標を設定
-			laserParticlesPosition.z = playerPosition.z + 100.0f;//Z座標を設定
+			laserParticlesPosition.z = playerPosition.z + 150.0f;//Z座標を設定
 			logoFlashCount = 0.0f;//ロゴ点滅からの経過時間リセット
 			logoHide = true;//ロゴを表示する
 			dangerUIArive = true;//警告演出のUIを表示する
