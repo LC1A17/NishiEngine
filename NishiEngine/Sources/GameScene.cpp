@@ -350,6 +350,12 @@ void GameScene::InitializeVariable()
 	scoreBoard4 = 0;//スコアボード0000[0]
 
 	gameTime = 0.0f;//ゲーム開始からの経過時間
+
+	//ゲーム終了時間
+	if (selectStageNumber == 1.0f) { gameTimeLimit = 900.0f; }
+	else if (selectStageNumber == 2.0f) { gameTimeLimit = 950.0f; }
+	else { gameTimeLimit = 1000.0f; }
+
 	deadLinePosition = -10.0f;//オブジェクトが自然消滅するライン
 
 	sideJump = false;//移動中かどうか
@@ -778,10 +784,10 @@ void GameScene::CreateObject3d()
 	skydomeModel = Model::CreateFromOBJ("skydome");//天球
 	railModel = Model::CreateFromOBJ("enemy3");//レール
 	playerModel = Model::CreateFromOBJ("player");//プレイヤー
-	block1Model = Model::CreateFromOBJ("enemy");//障害物1
+	block1Model = Model::CreateFromOBJ("enemy3");//障害物1
 	block2Model = Model::CreateFromOBJ("enemy2");//障害物2
 	block3Model = Model::CreateFromOBJ("enemy3");//障害物3
-	item1Model = Model::CreateFromOBJ("parts");//アイテム1
+	item1Model = Model::CreateFromOBJ("enemy2");//アイテム1
 	item2Model = Model::CreateFromOBJ("parts");//アイテム2
 	item3Model = Model::CreateFromOBJ("parts");//アイテム3
 	playerBarrierPartsModel = Model::CreateFromOBJ("parts01");//プレイヤーバリアパーツ
@@ -980,7 +986,7 @@ void GameScene::DrawForegroundSprite()
 			//選択中の項目以外は表示する
 			if (resultSelect != 0.0f)
 			{
-				if (selectStageNumber != 3.0f)
+				if (selectStageNumber != maxStageNumber)
 				{
 					nextLogo->Draw();//NEXTのロゴ
 				}
@@ -997,7 +1003,7 @@ void GameScene::DrawForegroundSprite()
 		//表示中
 		else
 		{
-			if (selectStageNumber != 3.0f)
+			if (selectStageNumber != maxStageNumber)
 			{
 				nextLogo->Draw();//NEXTのロゴ
 			}
@@ -1577,11 +1583,11 @@ void GameScene::ObjectMoveAndRotation()
 			if (block3Arive[i])
 			{
 				//出現時は少しずつ大きくなって出現
-				if (block3Scale[i].x < 1.0f)
+				if (block3Scale[i].x < 1.5f)
 				{
-					block3Scale[i].x += 0.0625f;
-					block3Scale[i].y += 0.0625f;
-					block3Scale[i].z += 0.0625f;
+					block3Scale[i].x += 0.1f;
+					block3Scale[i].y += 0.1f;
+					block3Scale[i].z += 0.1f;
 				}
 				//オブジェクト消滅ラインに触れたら消滅
 				if (block3Position[i].z < deadLinePosition)
@@ -1613,7 +1619,7 @@ void GameScene::ObjectMoveAndRotation()
 			if (item2Arive[i])
 			{
 				//出現時は少しずつ大きくなって出現
-				if (item2Scale[i].x < 2.0f)
+				if (item2Scale[i].x < 1.0f)
 				{
 					item2Scale[i].x += 0.0625f;
 					item2Scale[i].y += 0.0625f;
@@ -1789,102 +1795,282 @@ void GameScene::StageManager()
 		//ゲーム経過時間に合わせて敵を出現
 		if (gameTime == 10.0f)
 		{
-			SpawnManager(8.0f, 3.0f);
 			SpawnManager(-8.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
-			SpawnManager(4.0f, 12.0f);
+			SpawnManager(8.0f, 3.0f);
+
 			SpawnManager(-4.0f, 12.0f);
+			SpawnManager(4.0f, 12.0f);
 		}
 		else if (gameTime == 70.0f)
 		{
-			SpawnManager(0.0f, 12.0f);
-			SpawnManager(8.0f, 12.0f);
 			SpawnManager(-4.0f, 3.0f);
 			SpawnManager(4.0f, 3.0f);
+
+			SpawnManager(-8.0f, 12.0f);
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(8.0f, 12.0f);
 		}
 		else if (gameTime == 130.0f)
 		{
-			SpawnManager(4.0f, 12.0f);
 			SpawnManager(-8.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
 			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(4.0f, 12.0f);
+
+			SpawnManager(-4.0f, 21.0f);
 		}
 		else if (gameTime == 200.0f)
 		{
 			SpawnManager(-8.0f, 3.0f);
-			SpawnManager(8.0f, 12.0f);
 			SpawnManager(-4.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
+
+			SpawnManager(8.0f, 12.0f);
 		}
 		else if (gameTime == 270.0f)
 		{
-			SpawnManager(8.0f, 3.0f);
-			SpawnManager(4.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(-4.0f, 12.0f);
+
+			SpawnManager(8.0f, 21.0f);
 		}
 		else if (gameTime == 350.0f)
 		{
-			SpawnManager(8.0f, 3.0f);
-			SpawnManager(-4.0f, 12.0f);
 			SpawnManager(-8.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(4.0f, 12.0f);
 		}
 		else if (gameTime == 410.0f)
 		{
-			SpawnManager(4.0f, 3.0f);
 			SpawnManager(-4.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
+			SpawnManager(4.0f, 3.0f);
+
+			SpawnManager(8.0f, 12.0f);
 		}
 		else if (gameTime == 470.0f)
 		{
-			SpawnManager(8.0f, 3.0f);
-			SpawnManager(4.0f, 12.0f);
 			SpawnManager(-8.0f, 3.0f);
 			SpawnManager(0.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(-4.0f, 12.0f);
+
+			SpawnManager(4.0f, 21.0f);
 		}
 		else if (gameTime == 530.0f)
 		{
-			SpawnManager(8.0f, 11.0f);
-			SpawnManager(4.0f, 11.0f);
-			SpawnManager(0.0f, 11.0f);
-			SpawnManager(-4.0f, 11.0f);
 			SpawnManager(-8.0f, 11.0f);
+			SpawnManager(-4.0f, 11.0f);
+			SpawnManager(0.0f, 11.0f);
+			SpawnManager(4.0f, 11.0f);
+			SpawnManager(8.0f, 11.0f);
 		}
 		else if (gameTime == 590.0f)
 		{
-			SpawnManager(8.0f, 3.0f);
-			SpawnManager(4.0f, 3.0f);
-			SpawnManager(0.0f, 3.0f);
-			SpawnManager(-4.0f, 3.0f);
 			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
 		}
 		else if (gameTime == 650.0f)
 		{
-			SpawnManager(8.0f, 11.0f);
-			SpawnManager(4.0f, 11.0f);
-			SpawnManager(0.0f, 11.0f);
-			SpawnManager(-4.0f, 11.0f);
 			SpawnManager(-8.0f, 11.0f);
+			SpawnManager(-4.0f, 11.0f);
+			SpawnManager(0.0f, 11.0f);
+			SpawnManager(4.0f, 11.0f);
+			SpawnManager(8.0f, 11.0f);
+
+			//SpawnManager(0.0f, 21.0f);
 		}
 		else if (gameTime == 710.0f)
 		{
-			SpawnManager(8.0f, 3.0f);
-			SpawnManager(4.0f, 3.0f);
-			SpawnManager(0.0f, 3.0f);
-			SpawnManager(-4.0f, 3.0f);
 			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
 		}
 		else if (gameTime == 770.0f)
 		{
-			SpawnManager(0.0f, 12.0f);
-			SpawnManager(8.0f, 3.0f);
-			SpawnManager(4.0f, 3.0f);
-			SpawnManager(-4.0f, 3.0f);
 			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(0.0f, 12.0f);
 		}
 	}
 	//ステージ2
 	else if (selectStageNumber == 2.0f)
+	{
+		//ゲーム経過時間に合わせて敵を出現
+		if (gameTime == 10.0f)
+		{
+			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+		}
+		else if (gameTime == 30.0f)
+		{
+
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+
+			SpawnManager(0.0f, 12.0f);
+		}
+		else if (gameTime == 80.0f)
+		{
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(-4.0f, 12.0f);
+			SpawnManager(4.0f, 12.0f);
+
+			SpawnManager(8.0f, 21.0f);
+		}
+		else if (gameTime == 100.0f)
+		{
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(0.0f, 1.0f);
+		}
+		else if (gameTime == 160.0f)
+		{
+			SpawnManager(0.0f, 3.0f);
+
+			SpawnManager(-8.0f, 12.0f);
+		}
+		else if (gameTime == 180.0f)
+		{
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+		}
+		else if (gameTime == 240.0f)
+		{
+			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(-4.0f, 11.0f);
+			SpawnManager(4.0f, 11.0f);
+
+			SpawnManager(8.0f, 21.0f);
+		}
+		else if (gameTime == 300.0f)
+		{
+			SpawnManager(-8.0f, 3.0f);
+
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+
+			SpawnManager(8.0f, 12.0f);
+		}
+		else if (gameTime == 360.0f)
+		{
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(0.0f, 1.0f);
+
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(4.0f, 12.0f);
+		}
+		else if (gameTime == 400.0f)
+		{
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(8.0f, 1.0f);
+
+			SpawnManager(0.0f, 12.0f);
+
+			SpawnManager(0.0f, 21.0f);
+		}
+		else if (gameTime == 460.0f)
+		{
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+
+			SpawnManager(8.0f, 12.0f);
+		}
+		else if (gameTime == 520.0f)
+		{
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(8.0f, 1.0f);
+
+			SpawnManager(4.0f, 12.0f);
+		}
+		else if (gameTime == 580.0f)
+		{
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+			
+			SpawnManager(-4.0f, 12.0f);
+
+			SpawnManager(-4.0f, 21.0f);
+		}
+		else if (gameTime == 610.0f)
+		{
+			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+
+			SpawnManager(0.0f, 11.0f);
+		}
+		else if (gameTime == 640.0f)
+		{
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(4.0f, 3.0f);
+
+			SpawnManager(-4.0f, 12.0f);
+		}
+		else if (gameTime == 700.0f)
+		{
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+			SpawnManager(8.0f, 1.0f);
+
+			SpawnManager(-8.0f, 12.0f);
+		}
+		else if (gameTime == 730.0f)
+		{
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(-4.0f, 3.0f);
+
+			//SpawnManager(-8.0f, 21.0f);
+		}
+		else if (gameTime == 760.0f)
+		{
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(-8.0f, 1.0f);
+
+			SpawnManager(4.0f, 12.0f);
+		}
+		else if (gameTime == 790.0f)
+		{
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(-4.0f, 12.0f);
+		}
+		else if (gameTime == 820.0f)
+		{
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(4.0f, 12.0f);
+			SpawnManager(-4.0f, 12.0f);
+
+			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+		}
+	}
+	//ステージ3
+	else
 	{
 		//ゲーム経過時間に合わせて敵を出現
 		if (gameTime == 40.0f)
@@ -1899,11 +2085,6 @@ void GameScene::StageManager()
 		{
 			SpawnManager(0.0f, 21.0f);
 		}
-	}
-	//ステージ3
-	else
-	{
-		//ゲーム経過時間に合わせて敵を出現
 	}
 }
 
@@ -2026,7 +2207,7 @@ void GameScene::PlayerCollision()
 				float d = sqrt(a * a + b * b + c * c);
 
 				//当たっていたら障害物を消滅
-				if (d <= 1)
+				if (d <= 2)
 				{
 					block1Arive[i] = false;//障害物1を消滅
 					block1Position[i] = offScreenPosition;//画面外に移動
@@ -2062,7 +2243,7 @@ void GameScene::PlayerCollision()
 				float d = sqrt(a * a + b * b + c * c);
 
 				//当たっていたら障害物を消滅
-				if (d <= 1)
+				if (d <= 2)
 				{
 					block2Arive[i] = false;//障害物2を消滅
 					block2Position[i] = offScreenPosition;//画面外に移動
@@ -2098,7 +2279,7 @@ void GameScene::PlayerCollision()
 				float d = sqrt(a * a + b * b + c * c);
 
 				//当たっていたら障害物を消滅
-				if (d <= 1)
+				if (d <= 2)
 				{
 					block3Arive[i] = false;//障害物1を消滅
 					block3Position[i] = offScreenPosition;//画面外に移動
