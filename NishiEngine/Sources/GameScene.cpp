@@ -264,6 +264,7 @@ void GameScene::Update()
 	playerLandingParticle->Update();//プレイヤー着地パーティクル更新
 	laserParticle->Update();//レーザーパーティクル更新
 	dangerParticle->Update();//警告演出パーティクル更新
+	itemGetParticle->Update();//アイテム獲得パーティクル更新
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -381,6 +382,9 @@ void GameScene::InitializeVariable()
 
 	isDangerParticles = false;//警告演出パーティクル生成中かの判定
 	isDangerParticlesCount = 0.0f;//警告演出エフェクト生成開始からの経過時間
+
+	isItemGetParticles = false;//アイテム獲得パーティクル生成中かの判定
+	isItemGetParticlesCount = 0.0f;//アイテム獲得エフェクト生成開始からの経過時間
 
 	distanceBarPosition = { 138.0f, 42.0f };//タイムバーの座標
 	stageClearLogoPosition = { 40.0f, -150.0f };//STAGE CLEARのロゴの座標を変更
@@ -776,6 +780,9 @@ void GameScene::InitializeParticleManager()
 	//警告演出パーティクル
 	dangerParticle = ParticleManager::GetInstance();
 	dangerParticle->SetCamera(camera);
+	//アイテム獲得パーティクル
+	itemGetParticle = ParticleManager::GetInstance();
+	itemGetParticle->SetCamera(camera);
 }
 
 void GameScene::CreateObject3d()
@@ -1200,8 +1207,48 @@ void GameScene::CreateDangerParticles()
 	}
 }
 
+void GameScene::CreateItemGetParticles()
+{
+	for (int i = 0; i < 50; i++)
+	{
+		const float rnd_pos = 10.0f;
+		XMFLOAT3 pos{};
+		pos.x = itemGetParticlesPosition.x;
+		pos.y = itemGetParticlesPosition.y;
+		pos.z = itemGetParticlesPosition.z + 2.0f;
+
+		const float rnd_vel = 0.2f;
+		XMFLOAT3 vel{};
+		vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+
+		XMFLOAT3 acc{};
+		const float rnd_acc = 0.005f;
+		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
+
+		//追加
+		itemGetParticle->Add(60, pos, vel, acc, 0.4f, 0.0f, { 0.3f, 0.2f, 0.0f, 1.0f }, { 0.3f, 0.2f, 0.0f, 0.0f });
+	}
+}
+
 void GameScene::ControlParticles()
 {
+	//アイテム獲得エフェクト
+	if (isItemGetParticles)
+	{
+		isItemGetParticlesCount += 1.0f;//アイテム獲得エフェクト生成開始からの経過時間増加
+
+		if (isItemGetParticlesCount < isItemGetParticlesLimit)
+		{
+			CreateItemGetParticles();//アイテム獲得パーティクル生成
+		}
+		else
+		{
+			isItemGetParticlesCount = 0.0f;//アイテム獲得エフェクト生成開始からの経過時間をリセット
+			isItemGetParticles = false;//アイテム獲得エフェクトの生成を停止
+		}
+	}
 	//プレイヤー被弾エフェクト
 	if (isPlayerHitParticles)
 	{
@@ -2328,6 +2375,11 @@ void GameScene::PlayerCollision()
 						preScore += 100;//スコア+100
 					}
 
+					itemGetParticlesPosition.x = playerPosition.x;//アイテム獲得エフェクトのX座標設定
+					itemGetParticlesPosition.y = playerPosition.y;//アイテム獲得エフェクトのY座標設定
+					itemGetParticlesPosition.z = playerPosition.z;//アイテム獲得エフェクトのZ座標設定
+					isItemGetParticles = true;//アイテム獲得エフェクトを生成
+
 					playerBarrierPartsPosition = playerPosition;//プレイヤーの座標に生成
 					item1Arive[i] = false;//アイテム1を消滅
 					item1Position[i] = offScreenPosition;//アイテム1を画面外に移動
@@ -2348,6 +2400,11 @@ void GameScene::PlayerCollision()
 				//当たっていたら獲得
 				if (d <= 1)
 				{
+					itemGetParticlesPosition.x = playerPosition.x;//アイテム獲得エフェクトのX座標設定
+					itemGetParticlesPosition.y = playerPosition.y;//アイテム獲得エフェクトのY座標設定
+					itemGetParticlesPosition.z = playerPosition.z;//アイテム獲得エフェクトのZ座標設定
+					isItemGetParticles = true;//アイテム獲得エフェクトを生成
+
 					preScore += 100.0f;//スコア+100
 					item2Arive[i] = false;//アイテム2を消滅
 					item2Position[i] = offScreenPosition;//画面外に移動

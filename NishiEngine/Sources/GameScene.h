@@ -76,6 +76,8 @@ public://メンバ関数
 	void CreateLaserParticles();
 	//警告演出パーティクル生成
 	void CreateDangerParticles();
+	//アイテム獲得パーティクル生成
+	void CreateItemGetParticles();
 	//各種パーティクル生成処理
 	void ControlParticles();
 	//シーン遷移開始前処理(int 遷移後のシーン)
@@ -180,6 +182,7 @@ private://メンバ変数
 	ParticleManager* playerLandingParticle	 = nullptr;//プレイヤー着地パーティクル
 	ParticleManager* laserParticle			 = nullptr;//レーザーパーティクル
 	ParticleManager* dangerParticle			 = nullptr;//警告演出パーティクル
+	ParticleManager* itemGetParticle = nullptr;//アイテム獲得パーティクル
 
 	//モデル関連
 	Model* skydomeModel				 = nullptr;//天球
@@ -258,6 +261,7 @@ private://メンバ変数
 	XMFLOAT3 playerLandingParticlesPosition	 = {     0.0f,     0.0f,     0.0f };//プレイヤー着地パーティクル生成座標
 	XMFLOAT3 laserParticlesPosition			 = {     0.0f,     2.0f,     0.0f };//レーザーパーティクル生成座標
 	XMFLOAT3 dangerParticlesPosition		 = {	 0.0f,     2.0f,     0.0f };//警告演出パーティクル生成座標
+	XMFLOAT3 itemGetParticlesPosition = { 0.0f,     0.0f,     0.0f };//アイテム獲得パーティクル生成座標
 	
 	//初期化関連
 	bool firstInitialize = false;//初回起動時かの判定
@@ -357,4 +361,8 @@ private://メンバ変数
 	bool isDangerParticles = false;//警告演出パーティクル生成中かの判定
 	float isDangerParticlesCount = 0.0f;//警告演出エフェクト生成開始からの経過時間
 	float isDangerParticlesLimit = 20.0f;//警告演出エフェクトの生成時間
+
+	bool isItemGetParticles = false;//アイテム獲得パーティクル生成中かの判定
+	float isItemGetParticlesCount = 0.0f;//アイテム獲得エフェクト生成開始からの経過時間
+	float isItemGetParticlesLimit = 5.0f;//アイテム獲得エフェクトの生成時間
 };
