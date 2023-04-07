@@ -78,6 +78,10 @@ public://メンバ関数
 	void CreateDangerParticles();
 	//アイテム獲得パーティクル生成
 	void CreateItemGetParticles();
+	//強化プレイヤー着地パーティクル生成
+	void CreatePlayerPowerLandingParticles();
+	//障害物破壊パーティクル生成
+	void CreateBlockBreakParticles();
 	//各種パーティクル生成処理
 	void ControlParticles();
 	//シーン遷移開始前処理(int 遷移後のシーン)
@@ -108,6 +112,8 @@ public://メンバ関数
 	void PlayerCollision();
 	//スコアボードの描画
 	void DrawScoreBoard(bool isResult);
+	//スコア獲得の演出
+	void ItemGetLogo();
 
 private://メンバ変数
 	DirectXCommon* dxCommon	 = nullptr;
@@ -153,6 +159,8 @@ private://メンバ変数
 	Sprite* dangerUI		 = nullptr;//警告演出の！マークのUI
 	Sprite* scoreBoard		 = nullptr;//スコアボード
 	Sprite* resultScoreBoard = nullptr;//リザルトのスコアボード
+	Sprite* scoreGetSprite	 = nullptr;//スコア獲得ポップ
+	Sprite* armorGetSprite	 = nullptr;//バリア獲得ポップ
 
 	Sprite* scoreNumber0[5];//スコア表示用の0
 	Sprite* scoreNumber1[5];//スコア表示用の1
@@ -182,7 +190,9 @@ private://メンバ変数
 	ParticleManager* playerLandingParticle	 = nullptr;//プレイヤー着地パーティクル
 	ParticleManager* laserParticle			 = nullptr;//レーザーパーティクル
 	ParticleManager* dangerParticle			 = nullptr;//警告演出パーティクル
-	ParticleManager* itemGetParticle = nullptr;//アイテム獲得パーティクル
+	ParticleManager* itemGetParticle		 = nullptr;//アイテム獲得パーティクル
+	ParticleManager* playerPowerLandingParticle = nullptr;//強化プレイヤー着地パーティクル
+	ParticleManager* blockBreakParticle		 = nullptr;//障害物破壊パーティクル
 
 	//モデル関連
 	Model* skydomeModel				 = nullptr;//天球
@@ -218,12 +228,14 @@ private://メンバ変数
 	XMFLOAT2 stageClearLogoPosition	 = {    40.0f,  -150.0f };//STAGE CLEARのロゴの座標
 	XMFLOAT2 gameoverLogoPosition	 = {   153.0f,  -150.0f };//GAME OVERのロゴの座標
 	XMFLOAT2 blackBackPosition		 = { -1536.0f,  -864.0f };//シーン遷移用黒背景の座標
+	XMFLOAT2 scoreGetSpritePosition	 = {  1000.0f,  1000.0f };//スコア獲得スプライトの座標
+	XMFLOAT2 armorGetSpritePosition	 = {  1000.0f,  1000.0f };//バリア獲得スプライトの座標
 
 	//オブジェクト座標関連
 	XMFLOAT3 initializeCoordinate		= {     0.0f,     0.0f,     0.0f };//初期位置
 	XMFLOAT3 offScreenPosition			= {  1000.0f,  1000.0f,  1000.0f };//画面外の座標
 	XMFLOAT3 skydomePosition			= {     0.0f,     0.0f,     0.0f };//天球の座標
-	XMFLOAT3 cameraPosition				= {     0.0f,     4.5f,     0.0f };//カメラの座標
+	XMFLOAT3 cameraPosition				= {     0.0f,     5.5f,     0.0f };//カメラの座標
 	XMFLOAT3 skydomeScale				= {     3.0f,     3.0f,     3.0f };//天球のスケール
 	XMFLOAT3 oldPlayerPosition			= {     0.0f,     0.0f,     0.0f };//移動前のプレイヤーの座標
 	XMFLOAT3 playerPosition				= {     0.0f,     2.0f,     3.0f };//プレイヤーの座標
@@ -261,7 +273,8 @@ private://メンバ変数
 	XMFLOAT3 playerLandingParticlesPosition	 = {     0.0f,     0.0f,     0.0f };//プレイヤー着地パーティクル生成座標
 	XMFLOAT3 laserParticlesPosition			 = {     0.0f,     2.0f,     0.0f };//レーザーパーティクル生成座標
 	XMFLOAT3 dangerParticlesPosition		 = {	 0.0f,     2.0f,     0.0f };//警告演出パーティクル生成座標
-	XMFLOAT3 itemGetParticlesPosition = { 0.0f,     0.0f,     0.0f };//アイテム獲得パーティクル生成座標
+	XMFLOAT3 itemGetParticlesPosition		 = {	 0.0f,     0.0f,     0.0f };//アイテム獲得パーティクル生成座標
+	XMFLOAT3 blockBreakParticlesPosition	 = {	 0.0f,     0.0f,     0.0f };//障害物破壊パーティクル生成座標
 	
 	//初期化関連
 	bool firstInitialize = false;//初回起動時かの判定
@@ -287,6 +300,7 @@ private://メンバ変数
 	//ステージセレクト関連
 	float selectStageNumber = 1.0f;//選択中のステージ
 	float maxStageNumber = 3.0f;//ステージの最大数
+	bool stageChange = false;//ステージ変更したかの判定
 
 	//リザルト関連
 	float resultSelect = 0.0f;//リザルトの選択肢の位置
@@ -300,6 +314,9 @@ private://メンバ変数
 	int scoreBoard2 = 0;//スコアボード00[0]00
 	int scoreBoard3 = 0;//スコアボード000[0]0
 	int scoreBoard4 = 0;//スコアボード0000[0]
+	bool scoreGetBoardArive = false;//スコア獲得のスプライトが出現しているかの判定
+	float scoreGetBoardCount = 15.0f;//スコア獲得のスプライトの経過時間
+	float scoreGetBoardLimit = 0.0f;//スコア獲得のスプライトの出現時間
 
 	//システム関連
 	float gameTime = 0.0f;//ゲーム開始からの経過時間
@@ -320,7 +337,15 @@ private://メンバ変数
 	float sideJumpFinishTime = 3.9f;//移動終了の値
 	float gravity = 9.8f;//重力
 	float playerRailPosition = 2.0f;//プレイヤーのいるレール(一番左から0)
-	float equipItem = 0.0f;//装着中のパーツの種類
+	float equipItem = 0.0f;//装着中のパーツの種類]
+	bool armorGetBoardArive = false;//バリア獲得のスプライトが出現しているかの判定
+	float armorGetBoardCount = 15.0f;//バリア獲得のスプライトの経過時間
+	float armorGetBoardLimit = 0.0f;//バリア獲得のスプライトの出現時間
+
+	//強化着地関連
+	bool powerLanding = false;//強化着地かの判定
+	float powerLandingCount = 0.0f;//強化着地開始からの経過時間
+	float powerLandingLimit = 40.0f;//強化着地の出現時間
 
 	//障害物関連
 	float autoMoveBlockSpeedZ = -0.6f;//障害物で前に進む速度
@@ -365,4 +390,12 @@ private://メンバ変数
 	bool isItemGetParticles = false;//アイテム獲得パーティクル生成中かの判定
 	float isItemGetParticlesCount = 0.0f;//アイテム獲得エフェクト生成開始からの経過時間
 	float isItemGetParticlesLimit = 5.0f;//アイテム獲得エフェクトの生成時間
+
+	bool isPlayerPowerLandingParticles = false;//強化プレイヤー着地エフェクト生成中かの判定
+	float isPlayerPowerLandingParticlesCount = 0.0f;//強化プレイヤー着地エフェクト生成開始からの経過時間
+	float isPlayerPowerLandingParticlesLimit = 10.0f;//強化プレイヤー着地エフェクトの生成時間
+
+	bool isBlockBreakParticles = false;//障害物破壊エフェクト生成中かの判定
+	float isBlockBreakParticlesCount = 0.0f;//障害物破壊エフェクト生成開始からの経過時間
+	float isBlockBreakParticlesLimit = 10.0f;//障害物破壊エフェクトの生成時間
 };

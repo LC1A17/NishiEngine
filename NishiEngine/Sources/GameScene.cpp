@@ -9,7 +9,10 @@
 
 using namespace DirectX;
 
-GameScene::GameScene() {}
+GameScene::GameScene()
+{
+
+}
 
 GameScene::~GameScene()
 {
@@ -43,6 +46,8 @@ GameScene::~GameScene()
 	safe_delete(dangerUI);//警告演出の！マークのUI
 	safe_delete(scoreBoard);//スコアボード
 	safe_delete(resultScoreBoard);//リザルトのスコアボード
+	safe_delete(scoreGetSprite);//スコア獲得スプライト
+	safe_delete(armorGetSprite);//バリア獲得スプライト
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -161,6 +166,7 @@ void GameScene::Update()
 	ScoreCharge();//スコア加算処理
 	CalculationScoreBoard();//スコアボードの表示用計算
 	ControlParticles();//各種パーティクル生成処理
+	ItemGetLogo();//スコア獲得の演出
 
 	//シーン遷移処理
 	if (sceneChange) { SceneChange(nextScene); }
@@ -225,19 +231,15 @@ void GameScene::Update()
 		//SPACEキーでカーソルを合わせた方のシーンへ移行
 		if (input->TriggerKey(DIK_SPACE) && !sceneChange)
 		{
+			stageChange = false;
 			//左の選択肢
 			if (resultSelect == 0.0f)
 			{
-				if (scene == ClearResult && selectStageNumber != maxStageNumber)
-				{
-					selectStageNumber += 1.0f;//現在のステージ+1
-				}
 				SceneChangeStart(StartLogo);//シーン遷移開始処理
 			}
 			//右の選択肢
 			else if (resultSelect == 1.0f)
 			{
-				selectStageNumber = 1.0f;//ステージの選択肢をリセット
 				SceneChangeStart(Title);//シーン遷移開始処理
 			}
 		}
@@ -265,6 +267,8 @@ void GameScene::Update()
 	laserParticle->Update();//レーザーパーティクル更新
 	dangerParticle->Update();//警告演出パーティクル更新
 	itemGetParticle->Update();//アイテム獲得パーティクル更新
+	playerPowerLandingParticle->Update();//強化プレイヤー着地パーティクル更新
+	blockBreakParticle->Update();//障害物破壊パーティクル更新
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -386,11 +390,19 @@ void GameScene::InitializeVariable()
 	isItemGetParticles = false;//アイテム獲得パーティクル生成中かの判定
 	isItemGetParticlesCount = 0.0f;//アイテム獲得エフェクト生成開始からの経過時間
 
+	isPlayerPowerLandingParticles = false;//強化プレイヤー着地エフェクト生成中かの判定
+	isPlayerPowerLandingParticlesCount = 0.0f;//強化プレイヤー着地エフェクト生成開始からの経過時間
+
+	isBlockBreakParticles = false;//障害物破壊エフェクト生成中かの判定
+	isBlockBreakParticlesCount = 0.0f;//障害物破壊エフェクト生成開始からの経過時間
+
 	distanceBarPosition = { 138.0f, 42.0f };//タイムバーの座標
 	stageClearLogoPosition = { 40.0f, -150.0f };//STAGE CLEARのロゴの座標を変更
 	gameoverLogoPosition = { 153.0f, -150.0f };//GAME OVERのロゴの座標を変更
+	scoreGetSpritePosition = { 1000.0f, 1000.0f };//スコア獲得スプライトの座標
+	armorGetSpritePosition = { 1000.0f, 1000.0f };//バリア獲得スプライトの座標
 
-	cameraPosition = { 0.0f, 4.5f, 0.0f };//カメラの座標
+	cameraPosition = { 0.0f, 5.5f, 0.0f };//カメラの座標
 	skydomePosition = initializeCoordinate;//天球の座標
 	playerPosition = { 0.0f, 2.0f, 3.0f };//プレイヤーの座標
 	playerRotation = initializeCoordinate;//プレイヤーの回転
@@ -576,6 +588,16 @@ void GameScene::CreateSprite()
 		assert(0);
 		return;
 	}
+	if (!Sprite::LoadTexture(126, L"Resources/sprite/scoreGet.png"))
+	{//スコア獲得のスプライト
+		assert(0);
+		return;
+	}
+	if (!Sprite::LoadTexture(127, L"Resources/sprite/armorGet.png"))
+	{//バリア獲得のスプライト
+		assert(0);
+		return;
+	}
 
 	if (!Sprite::LoadTexture(200, L"Resources/font/0.png"))
 	{//スコア表示用の0
@@ -655,6 +677,8 @@ void GameScene::CreateSprite()
 	dangerUI = Sprite::Create(124, { 0.0f, 0.0f });//警告演出の！マークのUI
 	scoreBoard = Sprite::Create(125, { 0.0f, 0.0f });//スコアボード
 	resultScoreBoard = Sprite::Create(125, { 0.0f, 0.0f });//リザルトのスコアボード
+	scoreGetSprite = Sprite::Create(126, { 0.0f, 0.0f });//スコア獲得のスプライト
+	armorGetSprite = Sprite::Create(127, { 0.0f, 0.0f });//バリア獲得のスプライト
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -761,6 +785,8 @@ void GameScene::SettingSprite()
 	distanceBarUI->SetPosition(distanceBarPosition);//進行度ゲージの赤バー
 	stageClearLogo->SetPosition(stageClearLogoPosition);//STAGE CLEARのロゴ
 	gameoverLogo->SetPosition(gameoverLogoPosition);//GAME OVERのロゴ
+	scoreGetSprite->SetPosition(scoreGetSpritePosition);//スコア獲得のスプライト
+	armorGetSprite->SetPosition(armorGetSpritePosition);//バリア獲得のスプライト
 }
 
 void GameScene::InitializeParticleManager()
@@ -783,6 +809,12 @@ void GameScene::InitializeParticleManager()
 	//アイテム獲得パーティクル
 	itemGetParticle = ParticleManager::GetInstance();
 	itemGetParticle->SetCamera(camera);
+	//強化プレイヤー着地パーティクル
+	playerPowerLandingParticle = ParticleManager::GetInstance();
+	playerPowerLandingParticle->SetCamera(camera);
+	//障害物破壊パーティクル
+	blockBreakParticle = ParticleManager::GetInstance();
+	blockBreakParticle->SetCamera(camera);
 }
 
 void GameScene::CreateObject3d()
@@ -792,7 +824,7 @@ void GameScene::CreateObject3d()
 	railModel = Model::CreateFromOBJ("enemy3");//レール
 	playerModel = Model::CreateFromOBJ("player");//プレイヤー
 	block1Model = Model::CreateFromOBJ("enemy3");//障害物1
-	block2Model = Model::CreateFromOBJ("enemy2");//障害物2
+	block2Model = Model::CreateFromOBJ("enemy3");//障害物2
 	block3Model = Model::CreateFromOBJ("enemy3");//障害物3
 	item1Model = Model::CreateFromOBJ("enemy2");//アイテム1
 	item2Model = Model::CreateFromOBJ("parts");//アイテム2
@@ -977,6 +1009,8 @@ void GameScene::DrawForegroundSprite()
 			if (logoHide) { dangerUI->Draw(); }
 		}
 
+		scoreGetSprite->Draw();//スコア獲得のスプライト
+		armorGetSprite->Draw();//バリア獲得のスプライト
 		stageClearLogo->Draw();//STAGE CLEARのロゴ
 		gameoverLogo->Draw();//GAME OVERのロゴ
 		scoreBoard->Draw();//スコアボード
@@ -1153,7 +1187,7 @@ void GameScene::CreatePlayerLandingParticles()
 		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
 
 		//追加
-		playerLandingParticle->Add(60, pos, vel, acc, 1.0f, 0.0f, { 1.0f, 0.1f, 0.7f, 1.0f }, { 1.0f, 0.1f, 0.7f, 0.0f });
+		playerLandingParticle->Add(60, pos, vel, acc, 1.0f, 0.0f, { 0.0f, 0.6f, 0.1f, 1.0f }, { 0.0f, 0.6f, 0.1f, 0.0f });
 	}
 }
 
@@ -1186,7 +1220,7 @@ void GameScene::CreateDangerParticles()
 {
 	for (int i = 0; i < 25; i++)
 	{
-		const float rnd_pos = 1000.0f;
+		const float rnd_pos = 1500.0f;
 		XMFLOAT3 pos{};
 		pos.x = dangerParticlesPosition.x;
 		pos.y = dangerParticlesPosition.y;
@@ -1203,7 +1237,7 @@ void GameScene::CreateDangerParticles()
 		acc.y = (float)rand() / RAND_MAX * rnd_acc;
 
 		//追加
-		dangerParticle->Add(400, pos, vel, acc, 4.0f, 0.0f, { 0.5f, 0.0f, 0.3f, 0.1f }, { 0.5f, 0.0f, 0.3f, 0.0f });
+		dangerParticle->Add(400, pos, vel, acc, 4.0f, 0.0f, { 0.6f, 0.0f, 0.3f, 0.1f }, { 0.6f, 0.0f, 0.3f, 0.0f });
 	}
 }
 
@@ -1232,6 +1266,56 @@ void GameScene::CreateItemGetParticles()
 	}
 }
 
+void GameScene::CreatePlayerPowerLandingParticles()
+{
+	for (int i = 0; i < 50; i++)
+	{
+		const float rnd_pos = 10.0f;
+		XMFLOAT3 pos{};
+		pos.x = playerLandingParticlesPosition.x;
+		pos.y = playerLandingParticlesPosition.y - 0.5f;
+		pos.z = playerLandingParticlesPosition.z + 3.0f;
+
+		const float rnd_vel = 0.1f;
+		XMFLOAT3 vel{};
+		vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+
+		XMFLOAT3 acc{};
+		const float rnd_acc = 0.001f;
+		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
+
+		//追加
+		playerPowerLandingParticle->Add(60, pos, vel, acc, 1.0f, 0.0f, { 1.0f, 0.7f, 0.1f, 0.1f }, { 1.0f, 0.7f, 0.1f, 0.0f });
+	}
+}
+
+void GameScene::CreateBlockBreakParticles()
+{
+	for (int i = 0; i < 75; i++)
+	{
+		const float rnd_pos = 10.0f;
+		XMFLOAT3 pos{};
+		pos.x = playerHitParticlesPosition.x;
+		pos.y = playerHitParticlesPosition.y;
+		pos.z = playerHitParticlesPosition.z + 2.0f;
+
+		const float rnd_vel = 0.1f;
+		XMFLOAT3 vel{};
+		vel.x = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.y = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+		vel.z = (float)rand() / RAND_MAX * rnd_vel - rnd_vel / 2.0f;
+
+		XMFLOAT3 acc{};
+		const float rnd_acc = 0.001f;
+		acc.y = -(float)rand() / RAND_MAX * rnd_acc;
+
+		//追加
+		playerHitParticle->Add(60, pos, vel, acc, 1.0f, 0.0f, { 0.7f, 1.0f, 0.1f, 1.0f }, { 0.7f, 1.0f, 0.1f, 0.0f });
+	}
+}
+
 void GameScene::ControlParticles()
 {
 	//アイテム獲得エフェクト
@@ -1247,6 +1331,21 @@ void GameScene::ControlParticles()
 		{
 			isItemGetParticlesCount = 0.0f;//アイテム獲得エフェクト生成開始からの経過時間をリセット
 			isItemGetParticles = false;//アイテム獲得エフェクトの生成を停止
+		}
+	}
+	//障害物破壊エフェクト
+	if (isBlockBreakParticles)
+	{
+		isBlockBreakParticlesCount += 1.0f;//障害物破壊エフェクト生成開始からの経過時間増加
+
+		if (isBlockBreakParticlesCount < isBlockBreakParticlesLimit)
+		{
+			CreateBlockBreakParticles();//障害物破壊パーティクル生成
+		}
+		else
+		{
+			isBlockBreakParticlesCount = 0.0f;//障害物破壊エフェクト生成開始からの経過時間をリセット
+			isBlockBreakParticles = false;//障害物破壊エフェクトの生成を停止
 		}
 	}
 	//プレイヤー被弾エフェクト
@@ -1279,6 +1378,21 @@ void GameScene::ControlParticles()
 			isPlayerLandingParticles = false;//プレイヤー被弾エフェクトの生成を停止
 		}
 	}
+	//強化プレイヤー着地パーティクル
+	if (isPlayerPowerLandingParticles)
+	{
+		isPlayerPowerLandingParticlesCount += 1.0f;//強化プレイヤー着地エフェクト生成開始からの経過時間増加
+
+		if (isPlayerPowerLandingParticlesCount < isPlayerPowerLandingParticlesLimit)
+		{
+			CreatePlayerPowerLandingParticles();//強化プレイヤー着地パーティクル生成
+		}
+		else
+		{
+			isPlayerPowerLandingParticlesCount = 0.0f;//強化プレイヤー着地エフェクト生成開始からの経過時間をリセット
+			isPlayerPowerLandingParticles = false;//強化プレイヤー被弾エフェクトの生成を停止
+		}
+	}
 	//レーザー警告演出
 	if (dangerUIArive)
 	{
@@ -1297,10 +1411,10 @@ void GameScene::ControlParticles()
 					laserCollision[i] = true;//レーザーの判定を生成
 					laserStartPosition[i].x = laserParticlesPosition.x;//X座標を設定
 					laserStartPosition[i].y = 2.0f;//Y座標を設定
-					laserStartPosition[i].z = laserParticlesPosition.z;//Z座標を設定
+					laserStartPosition[i].z = laserParticlesPosition.z - 60.0f;//Z座標を設定
 					laserLengthPosition[i].x = laserParticlesPosition.x;//X座標を設定
 					laserLengthPosition[i].y = 2.0f;//Y座標を設定
-					laserLengthPosition[i].z = laserParticlesPosition.z;//Z座標を設定
+					laserLengthPosition[i].z = laserParticlesPosition.z - 60.0f;//Z座標を設定
 				}
 			}
 		}
@@ -1354,6 +1468,25 @@ void GameScene::SceneChange(int selectScene)
 	//黒背景が全画面を覆ったら画面裏を更新
 	if (sceneChangeCount == (sceneChangeFinish / 2.0f))
 	{
+		if (!stageChange)
+		{
+			//左の選択肢
+			if (resultSelect == 0.0f)
+			{
+				if (scene == ClearResult && selectStageNumber != maxStageNumber)
+				{
+					selectStageNumber += 1.0f;//現在のステージ+1
+				}
+				stageChange = true;
+			}
+			//右の選択肢
+			else if (resultSelect == 1.0f)
+			{
+				selectStageNumber = 1.0f;//ステージの選択肢をリセット
+				stageChange = true;
+			}
+		}
+
 		logoFlashCount = 0.0f;//ロゴ点滅カウントリセット
 		logoHide = true;//ロゴの表示を戻す
 		scene = selectScene;//選択したシーンへ移行
@@ -1522,7 +1655,7 @@ void GameScene::ObjectMoveAndRotation()
 	XMFLOAT3 waterPosition = waterPlane->GetPosition();//現在の水の座標を取得
 	waterPosition.z += waterPositionSpeed;//水を移動させる
 	waterPlane->SetPosition(waterPosition);//水の座標更新
-	
+
 	//プレイヤーバリアパーツ装着中はバリアパーツも連動して移動
 	if (equipItem == 1.0f)
 	{
@@ -1535,10 +1668,18 @@ void GameScene::ObjectMoveAndRotation()
 		}
 		playerBarrierPartsPosition.z += autoMoveSpeedZ;
 	}
+
+	//回転軸リセット
+	if (!sideJump)
+	{
+		playerRotation.y = 0.0f;//Y軸リセット
+		playerRotation.z = 0.0f;//Z軸リセット
+	}
+
 	//プレイヤーZ座標移動
 	playerPosition.z += autoMoveSpeedZ;
 	//プレイヤーX軸回転
-	playerRotation.x += autoMoveSpeedZ * 150.0f;
+	playerRotation.x += autoMoveSpeedZ * 75.0f;
 	//カメラZ座標移動
 	cameraPosition.z += autoMoveSpeedZ;
 	//天球移動
@@ -1565,6 +1706,16 @@ void GameScene::ObjectMoveAndRotation()
 
 		deadLinePosition += autoMoveSpeedZ;//オブジェクト消滅ラインをずらす
 
+		//スコアの増加
+		if (playerRailPosition == 0.0f || playerRailPosition == 4.0f)
+		{
+			preScore += 2;//スコア+2
+		}
+		else
+		{
+			preScore += 1;//スコア+1
+		}
+
 		//レーザーの当たり判定移動
 		for (int i = 0; i < 5; i++)
 		{
@@ -1572,7 +1723,8 @@ void GameScene::ObjectMoveAndRotation()
 			if (laserCollision[i])
 			{
 				laserCollisionCount[i] += 1.0f;//生成からの経過時間増加
-				laserLengthPosition[i].z -= 3.0f;//レーザーの長さ増加
+				laserStartPosition[i].z -= 0.5f;//レーザーの長さ増加
+				laserLengthPosition[i].z -= 2.5f;//レーザーの長さ増加
 
 				//一定時間判定が出たら消滅
 				if (laserCollisionCount[i] >= laserCollisionLimit[i])
@@ -1595,7 +1747,7 @@ void GameScene::ObjectMoveAndRotation()
 				if (block1Scale[i].x < 1.0f)
 				{
 					block1Scale[i].x += 0.0625f;
-					block1Scale[i].y += 0.0625f;
+					block1Scale[i].y += 0.05f;
 					block1Scale[i].z += 0.0625f;
 				}
 				//オブジェクト消滅ラインに触れたら消滅
@@ -1609,14 +1761,14 @@ void GameScene::ObjectMoveAndRotation()
 			//障害物2が生きている場合
 			if (block2Arive[i])
 			{
-				block2Position[i].z += autoMoveBlockSpeedZ;//障害物2のZ座標移動
+				block2Position[i].z -= autoMoveBlockSpeedZ / 3.0f;//障害物2のZ座標移動
 
 				//出現時は少しずつ大きくなって出現
-				if (block2Scale[i].x < 1.0f)
+				if (block2Scale[i].z < 1.5f)
 				{
-					block2Scale[i].x += 0.0625f;
-					block2Scale[i].y += 0.0625f;
-					block2Scale[i].z += 0.0625f;
+					block2Scale[i].x += 0.25f;
+					block2Scale[i].y += 0.08f;
+					block2Scale[i].z += 0.1f;
 				}
 				//オブジェクト消滅ラインに触れたら消滅
 				if (block2Position[i].z < deadLinePosition)
@@ -1633,7 +1785,7 @@ void GameScene::ObjectMoveAndRotation()
 				if (block3Scale[i].x < 1.5f)
 				{
 					block3Scale[i].x += 0.1f;
-					block3Scale[i].y += 0.1f;
+					block3Scale[i].y += 0.08f;
 					block3Scale[i].z += 0.1f;
 				}
 				//オブジェクト消滅ラインに触れたら消滅
@@ -1779,7 +1931,15 @@ void GameScene::PlayerMove()
 				playerLandingParticlesPosition.x = playerPosition.x;
 				playerLandingParticlesPosition.y = playerPosition.y;
 				playerLandingParticlesPosition.z = playerPosition.z;
-				isPlayerLandingParticles = true;//プレイヤー着地パーティクル生成
+
+				//プレイヤー着地パーティクル生成
+				if (equipItem == 0.0f) { isPlayerLandingParticles = true; }
+				//強化プレイヤー着地パーティクル生成
+				else
+				{
+					//powerLanding = true;
+					isPlayerPowerLandingParticles = true;
+				}
 				sideJump = false;//レール移動を終了
 			}
 		}
@@ -1805,11 +1965,20 @@ void GameScene::PlayerMove()
 			//移動量が一定値になったら移動終了
 			if (sideJumpCount < -sideJumpFinishTime)
 			{
+				//プレイヤーの位置に着地パーティクル生成
 				playerLandingParticlesPosition.x = playerPosition.x;
 				playerLandingParticlesPosition.y = playerPosition.y;
 				playerLandingParticlesPosition.z = playerPosition.z;
-				isPlayerLandingParticles = true;
-				sideJump = false;
+
+				//プレイヤー着地パーティクル生成
+				if (equipItem == 0.0f) { isPlayerLandingParticles = true; }
+				//強化プレイヤー着地パーティクル生成
+				else
+				{
+					//powerLanding = true;
+					isPlayerPowerLandingParticles = true;
+				}
+				sideJump = false;//レール移動を終了
 			}
 		}
 	}
@@ -1820,8 +1989,16 @@ void GameScene::ScoreCharge()
 	//加算前のスコアが1以上かつ加算後のスコアが99999未満なら実行
 	if (preScore > 0 && postScore < 99999)
 	{
-		preScore -= 1;//-1
-		postScore += 1;//+1
+		if (preScore > 9)
+		{
+			preScore -= 5;//-10
+			postScore += 5;//+10
+		}
+		else
+		{
+			preScore -= 1;//-1
+			postScore += 1;//+1
+		}
 	}
 }
 
@@ -2120,17 +2297,169 @@ void GameScene::StageManager()
 	else
 	{
 		//ゲーム経過時間に合わせて敵を出現
-		if (gameTime == 40.0f)
+		if (gameTime == 10.0f)
 		{
-			SpawnManager(-4.0f, 21.0f);
+			SpawnManager(-6.0f, 2.0f);
+			SpawnManager(6.0f, 2.0f);
+			SpawnManager(0.0f, 11.0f);
+		}
+		else if (gameTime == 90.0f)
+		{
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(8.0f, 3.0f);
+			SpawnManager(0.0f, 21.0f);
+		}
+		else if (gameTime == 110.0f)
+		{
+			SpawnManager(4.0f, 1.0f);
+		}
+		else if (gameTime == 130.0f)
+		{
+			SpawnManager(-4.0f, 12.0f);
+		}
+		else if (gameTime == 160.0f)
+		{
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(2.0f, 2.0f);
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(0.0f, 12.0f);
 		}
 		else if (gameTime == 200.0f)
 		{
+			SpawnManager(8.0f, 1.0f);
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(-8.0f, 12.0f);
+		}
+		else if (gameTime == 240.0f)
+		{
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(-6.0f, 2.0f);
+		}
+		else if (gameTime == 280.0f)
+		{
+			SpawnManager(-4.0f, 12.0f);
+			SpawnManager(8.0f, 3.0f);
+			SpawnManager(4.0f, 11.0f);
+			SpawnManager(0.0f, 3.0f);
+		}
+		else if (gameTime == 310.0f)
+		{
 			SpawnManager(4.0f, 21.0f);
+		}
+		else if (gameTime == 320.0f)
+		{
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(8.0f, 12.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(6.0f, 2.0f);
+			SpawnManager(-4.0f, 3.0f);
 		}
 		else if (gameTime == 360.0f)
 		{
-			SpawnManager(0.0f, 21.0f);
+			SpawnManager(-4.0f, 12.0f);
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(8.0f, 1.0f);
+		}
+		else if (gameTime == 400.0f)
+		{
+			SpawnManager(-8.0f, 12.0f);
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(4.0f, 1.0f);
+			SpawnManager(-2.0f, 2.0f);
+		}
+		else if (gameTime == 440.0f)
+		{
+			SpawnManager(8.0f, 12.0f);
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(0.0f, 1.0f);
+		}
+		else if (gameTime == 480.0f)
+		{
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(8.0f, 3.0f);
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(6.0f, 2.0f);
+		}
+		else if (gameTime == 520.0f)
+		{
+			SpawnManager(-8.0f, 12.0f);
+			SpawnManager(4.0f, 1.0f);
+			SpawnManager(0.0f, 3.0f);
+			SpawnManager(-8.0f, 3.0f);
+		}
+		else if (gameTime == 560.0f)
+		{
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(-4.0f, 12.0f);
+			SpawnManager(-2.0f, 2.0f);
+			SpawnManager(8.0f, 1.0f);
+		}
+		else if (gameTime == 580.0f)
+		{
+			SpawnManager(-8.0f, 21.0f);
+		}
+		else if (gameTime == 600.0f)
+		{
+			SpawnManager(4.0f, 3.0f);
+			SpawnManager(0.0f, 1.0f);
+			SpawnManager(-4.0f, 3.0f);
+			SpawnManager(8.0f, 11.0f);
+		}
+		else if (gameTime == 640.0f)
+		{
+			SpawnManager(8.0f, 12.0f);
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(2.0f, 2.0f);
+		}
+		else if (gameTime == 680.0f)
+		{
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(8.0f, 1.0f);
+			SpawnManager(0.0f, 3.0f);
+		}
+		else if (gameTime == 720.0f)
+		{
+			SpawnManager(-4.0f, 12.0f);
+			SpawnManager(-8.0f, 3.0f);
+			SpawnManager(6.0f, 2.0f);
+		}
+		else if (gameTime == 760.0f)
+		{
+			SpawnManager(4.0f, 1.0f);
+			SpawnManager(8.0f, 3.0f);
+			SpawnManager(-2.0f, 2.0f);
+			SpawnManager(8.0f, 21.0f);
+		}
+		else if (gameTime == 800.0f)
+		{
+			SpawnManager(4.0f, 12.0f);
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(8.0f, 1.0f);
+			SpawnManager(2.0f, 2.0f);
+			SpawnManager(-2.0f, 2.0f);
+		}
+		else if (gameTime == 840.0f)
+		{
+			SpawnManager(8.0f, 12.0f);
+			SpawnManager(-8.0f, 1.0f);
+			SpawnManager(8.0f, 1.0f);
+			SpawnManager(-6.0f, 2.0f);
+			SpawnManager(6.0f, 2.0f);
+		}
+		else if (gameTime == 880.0f)
+		{
+			SpawnManager(0.0f, 12.0f);
+			SpawnManager(-4.0f, 1.0f);
+			SpawnManager(4.0f, 1.0f);
+		}
+		else if (gameTime == 900.0f)
+		{
+			SpawnManager(0.0f, 3.0f);
 		}
 	}
 }
@@ -2238,9 +2567,68 @@ void GameScene::SpawnManager(float posX, float objectNum)
 
 void GameScene::PlayerCollision()
 {
+	//強化着地
+	if (powerLanding)
+	{
+		powerLandingCount += 1.0f;//強化着地開始からの経過時間増加
+
+		if (powerLandingCount >= powerLandingLimit)
+		{
+			powerLandingCount = 0.0f;//強化着地開始からの経過時間をリセット
+			powerLanding = false;//強化着地の判定を停止
+		}
+	}
+
 	for (int i = 0; i < 100; i++)
 	{
 		//プレイヤーと障害物orアイテムの当たり判定
+		//障害物2の生存確認
+		if (block2Arive[i])
+		{
+			//当たっているかの計算
+			float a = playerPosition.x - block2Position[i].x;
+			float b = playerPosition.y - block2Position[i].y;
+			float c = playerPosition.z - block2Position[i].z;
+			float d = sqrt(a * a + b * b + c * c);
+
+			//当たっていたら障害物を消滅
+			if (d <= 3)
+			{
+				block2Arive[i] = false;//障害物2を消滅
+				block2Position[i] = offScreenPosition;//画面外に移動
+				block2[i]->SetPosition(block2Position[i]);//障害物2の座標更新
+
+				//強化着地中は障害物を破壊してスコア加算
+				if (powerLanding)
+				{
+					blockBreakParticlesPosition.x = playerPosition.x;//障害物破壊エフェクトのX座標設定
+					blockBreakParticlesPosition.y = playerPosition.y;//障害物破壊エフェクトのY座標設定
+					blockBreakParticlesPosition.z = playerPosition.z;//障害物破壊エフェクトのZ座標設定
+					isBlockBreakParticles = true;//障害物破壊エフェクトを生成
+					preScore += 100;//スコア+10
+					break;
+				}
+
+				playerHitParticlesPosition.x = playerPosition.x;//被弾エフェクトのX座標設定
+				playerHitParticlesPosition.y = playerPosition.y;//被弾エフェクトのY座標設定
+				playerHitParticlesPosition.z = playerPosition.z;//被弾エフェクトのZ座標設定
+				isPlayerHitParticles = true;//被弾エフェクトを生成
+
+				//バリアパーツがない場合はゲームオーバー
+				if (equipItem != 0.0f)
+				{
+					equipItem = 0.0f;//パーツを戻す
+					playerBarrierPartsPosition = offScreenPosition;//画面外に移動
+					playerPartsScale = initializeCoordinate;//スケールをリセット
+					playerBarrierParts->SetPosition(playerBarrierPartsPosition);//座標を更新
+					playerBarrierParts->SetScale(playerPartsScale);//スケールを更新
+				}
+				else if (equipItem == 0.0f)
+				{
+					scene = GameoverLogo;//ゲームオーバー
+				}
+			}
+		}
 		//移動中は当たらない
 		if (!sideJump)
 		{
@@ -2260,41 +2648,16 @@ void GameScene::PlayerCollision()
 					block1Position[i] = offScreenPosition;//画面外に移動
 					block1[i]->SetPosition(block1Position[i]);//障害物1の座標更新
 
-					playerHitParticlesPosition.x = playerPosition.x;//被弾エフェクトのX座標設定
-					playerHitParticlesPosition.y = playerPosition.y;//被弾エフェクトのY座標設定
-					playerHitParticlesPosition.z = playerPosition.z;//被弾エフェクトのZ座標設定
-					isPlayerHitParticles = true;//被弾エフェクトを生成
-
-					//バリアパーツがない場合はゲームオーバー
-					if (equipItem != 0.0f)
+					//強化着地中は障害物を破壊してスコア加算
+					if (powerLanding)
 					{
-						equipItem = 0.0f;//パーツを戻す
-						playerBarrierPartsPosition = offScreenPosition;//画面外に移動
-						playerPartsScale = initializeCoordinate;//スケールをリセット
-						playerBarrierParts->SetPosition(playerBarrierPartsPosition);//座標を更新
-						playerBarrierParts->SetScale(playerPartsScale);//スケールを更新
+						blockBreakParticlesPosition.x = playerPosition.x;//障害物破壊エフェクトのX座標設定
+						blockBreakParticlesPosition.y = playerPosition.y;//障害物破壊エフェクトのY座標設定
+						blockBreakParticlesPosition.z = playerPosition.z;//障害物破壊エフェクトのZ座標設定
+						isBlockBreakParticles = true;//障害物破壊エフェクトを生成
+						preScore += 100;//スコア+10
+						break;
 					}
-					else if (equipItem == 0.0f)
-					{
-						scene = GameoverLogo;//ゲームオーバー
-					}
-				}
-			}
-			//障害物2の生存確認
-			if (block2Arive[i])
-			{
-				//当たっているかの計算
-				float a = playerPosition.x - block2Position[i].x;
-				float b = playerPosition.y - block2Position[i].y;
-				float c = playerPosition.z - block2Position[i].z;
-				float d = sqrt(a * a + b * b + c * c);
-
-				//当たっていたら障害物を消滅
-				if (d <= 2)
-				{
-					block2Arive[i] = false;//障害物2を消滅
-					block2Position[i] = offScreenPosition;//画面外に移動
-					block2[i]->SetPosition(block2Position[i]);//障害物2の座標更新
 
 					playerHitParticlesPosition.x = playerPosition.x;//被弾エフェクトのX座標設定
 					playerHitParticlesPosition.y = playerPosition.y;//被弾エフェクトのY座標設定
@@ -2331,6 +2694,17 @@ void GameScene::PlayerCollision()
 					block3Arive[i] = false;//障害物1を消滅
 					block3Position[i] = offScreenPosition;//画面外に移動
 					block3[i]->SetPosition(block3Position[i]);//障害物1の座標更新
+
+					//強化着地中は障害物を破壊してスコア加算
+					if (powerLanding)
+					{
+						blockBreakParticlesPosition.x = playerPosition.x;//障害物破壊エフェクトのX座標設定
+						blockBreakParticlesPosition.y = playerPosition.y;//障害物破壊エフェクトのY座標設定
+						blockBreakParticlesPosition.z = playerPosition.z;//障害物破壊エフェクトのZ座標設定
+						isBlockBreakParticles = true;//障害物破壊エフェクトを生成
+						preScore += 100;//スコア+10
+						break;
+					}
 
 					playerHitParticlesPosition.x = playerPosition.x;//被弾エフェクトのX座標設定
 					playerHitParticlesPosition.y = playerPosition.y;//被弾エフェクトのY座標設定
@@ -2375,6 +2749,11 @@ void GameScene::PlayerCollision()
 						preScore += 100;//スコア+100
 					}
 
+					armorGetBoardArive = true;//バリア獲得のスプライトを出現
+					armorGetBoardCount = 15.0f;//バリア獲得のスプライトの経過時間リセット
+					armorGetSpritePosition = { 546.0f, 400.0f };//バリア獲得のスプライトの座標設定
+					armorGetSprite->SetPosition(armorGetSpritePosition);//バリア獲得のスプライトの座標変更
+
 					itemGetParticlesPosition.x = playerPosition.x;//アイテム獲得エフェクトのX座標設定
 					itemGetParticlesPosition.y = playerPosition.y;//アイテム獲得エフェクトのY座標設定
 					itemGetParticlesPosition.z = playerPosition.z;//アイテム獲得エフェクトのZ座標設定
@@ -2404,6 +2783,11 @@ void GameScene::PlayerCollision()
 					itemGetParticlesPosition.y = playerPosition.y;//アイテム獲得エフェクトのY座標設定
 					itemGetParticlesPosition.z = playerPosition.z;//アイテム獲得エフェクトのZ座標設定
 					isItemGetParticles = true;//アイテム獲得エフェクトを生成
+
+					scoreGetBoardArive = true;//スコア獲得のスプライトを出現
+					scoreGetBoardCount = 15.0f;//スコア獲得のスプライトの経過時間リセット
+					scoreGetSpritePosition = { 528.0f, 400.0f };//スコア獲得のスプライトの座標設定
+					scoreGetSprite->SetPosition(scoreGetSpritePosition);//スコア獲得のスプライトの座標変更
 
 					preScore += 100.0f;//スコア+100
 					item2Arive[i] = false;//アイテム2を消滅
@@ -2718,5 +3102,39 @@ void GameScene::DrawScoreBoard(bool isResult)
 		break;
 	default:
 		break;
+	}
+}
+
+void GameScene::ItemGetLogo()
+{
+	//バリア獲得のスプライト
+	if (armorGetBoardArive)
+	{
+		armorGetBoardCount -= 1.0f;//バリア獲得のスプライトの経過時間増加
+		armorGetSpritePosition.y -= 2.0f;//バリア獲得のスプライトの座標設定
+		armorGetSprite->SetPosition(armorGetSpritePosition);//バリア獲得のスプライトの座標変更
+		armorGetSprite->SetColor({ 1, 1, 1, armorGetBoardCount / 15 });
+
+		//経過時間が出現時間を超えたら消滅
+		if (armorGetBoardCount <= armorGetBoardLimit)
+		{
+			armorGetBoardArive = false;//バリア獲得のスプライト消滅
+			armorGetBoardCount = 15.0f;//バリア獲得のスプライト経過時間リセット
+		}
+	}
+	//スコア獲得のスプライト
+	if (scoreGetBoardArive)
+	{
+		scoreGetBoardCount -= 1.0f;//スコア獲得のスプライトの経過時間増加
+		scoreGetSpritePosition.y -= 2.0f;//スコア獲得のスプライトの座標設定
+		scoreGetSprite->SetPosition(scoreGetSpritePosition);//スコア獲得のスプライトの座標変更
+		scoreGetSprite->SetColor({ 1, 1, 1, scoreGetBoardCount / 15 });
+
+		//経過時間が出現時間を超えたら消滅
+		if (scoreGetBoardCount <= scoreGetBoardLimit)
+		{
+			scoreGetBoardArive = false;//スコア獲得のスプライト消滅
+			scoreGetBoardCount = 15.0f;//スコア獲得のスプライト経過時間リセット
+		}
 	}
 }
